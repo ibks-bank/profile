@@ -15,6 +15,8 @@ import (
 	status "google.golang.org/grpc/status"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 )
@@ -26,14 +28,17 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AuthorizeRequest struct {
+type SignInRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 }
 
-func (x *AuthorizeRequest) Reset() {
-	*x = AuthorizeRequest{}
+func (x *SignInRequest) Reset() {
+	*x = SignInRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_profile_profile_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -41,13 +46,13 @@ func (x *AuthorizeRequest) Reset() {
 	}
 }
 
-func (x *AuthorizeRequest) String() string {
+func (x *SignInRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AuthorizeRequest) ProtoMessage() {}
+func (*SignInRequest) ProtoMessage() {}
 
-func (x *AuthorizeRequest) ProtoReflect() protoreflect.Message {
+func (x *SignInRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_api_profile_profile_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -59,19 +64,35 @@ func (x *AuthorizeRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AuthorizeRequest.ProtoReflect.Descriptor instead.
-func (*AuthorizeRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use SignInRequest.ProtoReflect.Descriptor instead.
+func (*SignInRequest) Descriptor() ([]byte, []int) {
 	return file_api_profile_profile_proto_rawDescGZIP(), []int{0}
 }
 
-type AuthorizeResponse struct {
+func (x *SignInRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *SignInRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type SignInResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 }
 
-func (x *AuthorizeResponse) Reset() {
-	*x = AuthorizeResponse{}
+func (x *SignInResponse) Reset() {
+	*x = SignInResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_profile_profile_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -79,13 +100,13 @@ func (x *AuthorizeResponse) Reset() {
 	}
 }
 
-func (x *AuthorizeResponse) String() string {
+func (x *SignInResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AuthorizeResponse) ProtoMessage() {}
+func (*SignInResponse) ProtoMessage() {}
 
-func (x *AuthorizeResponse) ProtoReflect() protoreflect.Message {
+func (x *SignInResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_api_profile_profile_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -97,9 +118,339 @@ func (x *AuthorizeResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AuthorizeResponse.ProtoReflect.Descriptor instead.
-func (*AuthorizeResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use SignInResponse.ProtoReflect.Descriptor instead.
+func (*SignInResponse) Descriptor() ([]byte, []int) {
 	return file_api_profile_profile_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *SignInResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+type SendCodeRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserID int64 `protobuf:"varint,1,opt,name=userID,proto3" json:"userID,omitempty"`
+}
+
+func (x *SendCodeRequest) Reset() {
+	*x = SendCodeRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_profile_profile_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SendCodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendCodeRequest) ProtoMessage() {}
+
+func (x *SendCodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_profile_profile_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendCodeRequest.ProtoReflect.Descriptor instead.
+func (*SendCodeRequest) Descriptor() ([]byte, []int) {
+	return file_api_profile_profile_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SendCodeRequest) GetUserID() int64 {
+	if x != nil {
+		return x.UserID
+	}
+	return 0
+}
+
+type SendCodeResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+}
+
+func (x *SendCodeResponse) Reset() {
+	*x = SendCodeResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_profile_profile_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SendCodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendCodeResponse) ProtoMessage() {}
+
+func (x *SendCodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_profile_profile_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendCodeResponse.ProtoReflect.Descriptor instead.
+func (*SendCodeResponse) Descriptor() ([]byte, []int) {
+	return file_api_profile_profile_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *SendCodeResponse) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+type SignUpRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Email    string    `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password string    `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	Passport *Passport `protobuf:"bytes,3,opt,name=passport,proto3" json:"passport,omitempty"`
+}
+
+func (x *SignUpRequest) Reset() {
+	*x = SignUpRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_profile_profile_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SignUpRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignUpRequest) ProtoMessage() {}
+
+func (x *SignUpRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_profile_profile_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignUpRequest.ProtoReflect.Descriptor instead.
+func (*SignUpRequest) Descriptor() ([]byte, []int) {
+	return file_api_profile_profile_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *SignUpRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *SignUpRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *SignUpRequest) GetPassport() *Passport {
+	if x != nil {
+		return x.Passport
+	}
+	return nil
+}
+
+type SignUpResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserID int64 `protobuf:"varint,1,opt,name=userID,proto3" json:"userID,omitempty"`
+}
+
+func (x *SignUpResponse) Reset() {
+	*x = SignUpResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_profile_profile_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SignUpResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignUpResponse) ProtoMessage() {}
+
+func (x *SignUpResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_profile_profile_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignUpResponse.ProtoReflect.Descriptor instead.
+func (*SignUpResponse) Descriptor() ([]byte, []int) {
+	return file_api_profile_profile_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *SignUpResponse) GetUserID() int64 {
+	if x != nil {
+		return x.UserID
+	}
+	return 0
+}
+
+type Passport struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Series     string                 `protobuf:"bytes,1,opt,name=series,proto3" json:"series,omitempty"`
+	Number     string                 `protobuf:"bytes,2,opt,name=number,proto3" json:"number,omitempty"`
+	FirstName  string                 `protobuf:"bytes,3,opt,name=firstName,proto3" json:"firstName,omitempty"`
+	MiddleName string                 `protobuf:"bytes,4,opt,name=middleName,proto3" json:"middleName,omitempty"`
+	LastName   string                 `protobuf:"bytes,5,opt,name=lastName,proto3" json:"lastName,omitempty"`
+	IssuedBy   string                 `protobuf:"bytes,6,opt,name=issuedBy,proto3" json:"issuedBy,omitempty"`
+	IssuedAt   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=issuedAt,proto3" json:"issuedAt,omitempty"`
+	Address    string                 `protobuf:"bytes,8,opt,name=address,proto3" json:"address,omitempty"`
+	Birthplace string                 `protobuf:"bytes,9,opt,name=birthplace,proto3" json:"birthplace,omitempty"`
+	Birthdate  *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=birthdate,proto3" json:"birthdate,omitempty"`
+}
+
+func (x *Passport) Reset() {
+	*x = Passport{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_profile_profile_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Passport) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Passport) ProtoMessage() {}
+
+func (x *Passport) ProtoReflect() protoreflect.Message {
+	mi := &file_api_profile_profile_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Passport.ProtoReflect.Descriptor instead.
+func (*Passport) Descriptor() ([]byte, []int) {
+	return file_api_profile_profile_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *Passport) GetSeries() string {
+	if x != nil {
+		return x.Series
+	}
+	return ""
+}
+
+func (x *Passport) GetNumber() string {
+	if x != nil {
+		return x.Number
+	}
+	return ""
+}
+
+func (x *Passport) GetFirstName() string {
+	if x != nil {
+		return x.FirstName
+	}
+	return ""
+}
+
+func (x *Passport) GetMiddleName() string {
+	if x != nil {
+		return x.MiddleName
+	}
+	return ""
+}
+
+func (x *Passport) GetLastName() string {
+	if x != nil {
+		return x.LastName
+	}
+	return ""
+}
+
+func (x *Passport) GetIssuedBy() string {
+	if x != nil {
+		return x.IssuedBy
+	}
+	return ""
+}
+
+func (x *Passport) GetIssuedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.IssuedAt
+	}
+	return nil
+}
+
+func (x *Passport) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *Passport) GetBirthplace() string {
+	if x != nil {
+		return x.Birthplace
+	}
+	return ""
+}
+
+func (x *Passport) GetBirthdate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Birthdate
+	}
+	return nil
 }
 
 var File_api_profile_profile_proto protoreflect.FileDescriptor
@@ -112,23 +463,97 @@ var file_api_profile_profile_proto_rawDesc = []byte{
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x2d, 0x67, 0x65,
 	0x6e, 0x2d, 0x6f, 0x70, 0x65, 0x6e, 0x61, 0x70, 0x69, 0x76, 0x32, 0x2f, 0x6f, 0x70, 0x74, 0x69,
 	0x6f, 0x6e, 0x73, 0x2f, 0x61, 0x6e, 0x6e, 0x6f, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x12, 0x0a, 0x10, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69,
-	0x7a, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x13, 0x0a, 0x11, 0x41, 0x75, 0x74,
-	0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xc0,
-	0x01, 0x0a, 0x07, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0xb4, 0x01, 0x0a, 0x09, 0x41,
-	0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x12, 0x1c, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69,
-	0x6c, 0x65, 0x5f, 0x70, 0x62, 0x2e, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65,
-	0x5f, 0x70, 0x62, 0x2e, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x6a, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x12, 0x22, 0x0d, 0x2f,
-	0x76, 0x31, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x3a, 0x01, 0x2a, 0x92,
-	0x41, 0x4f, 0x12, 0x20, 0xd0, 0x90, 0xd0, 0xb2, 0xd1, 0x82, 0xd0, 0xbe, 0xd1, 0x80, 0xd0, 0xb8,
-	0xd0, 0xb7, 0xd0, 0xb8, 0xd1, 0x80, 0xd0, 0xbe, 0xd0, 0xb2, 0xd0, 0xb0, 0xd1, 0x82, 0xd1, 0x8c,
-	0xd1, 0x81, 0xd1, 0x8f, 0x1a, 0x2b, 0xd0, 0x9f, 0xd1, 0x80, 0xd0, 0xbe, 0xd0, 0xb8, 0xd0, 0xb7,
-	0xd0, 0xb2, 0xd0, 0xbe, 0xd0, 0xb4, 0xd0, 0xb8, 0xd1, 0x82, 0x20, 0xd0, 0xb0, 0xd0, 0xb2, 0xd1,
-	0x82, 0xd0, 0xbe, 0xd1, 0x80, 0xd0, 0xb8, 0xd0, 0xb7, 0xd0, 0xb0, 0xd1, 0x86, 0xd0, 0xb8, 0xd1,
-	0x8e, 0x42, 0x12, 0x5a, 0x10, 0x2f, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x3b, 0x70, 0x72,
-	0x6f, 0x66, 0x69, 0x6c, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1b, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x22, 0x41, 0x0a, 0x0d, 0x53, 0x69, 0x67, 0x6e, 0x49, 0x6e, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61,
+	0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61,
+	0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x26, 0x0a, 0x0e, 0x53, 0x69, 0x67, 0x6e, 0x49, 0x6e,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65,
+	0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x29,
+	0x0a, 0x0f, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x03, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x44, 0x22, 0x26, 0x0a, 0x10, 0x53, 0x65, 0x6e,
+	0x64, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a,
+	0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x63, 0x6f, 0x64,
+	0x65, 0x22, 0x73, 0x0a, 0x0d, 0x53, 0x69, 0x67, 0x6e, 0x55, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73,
+	0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73,
+	0x77, 0x6f, 0x72, 0x64, 0x12, 0x30, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x70, 0x6f, 0x72, 0x74,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65,
+	0x5f, 0x70, 0x62, 0x2e, 0x50, 0x61, 0x73, 0x73, 0x70, 0x6f, 0x72, 0x74, 0x52, 0x08, 0x70, 0x61,
+	0x73, 0x73, 0x70, 0x6f, 0x72, 0x74, 0x22, 0x28, 0x0a, 0x0e, 0x53, 0x69, 0x67, 0x6e, 0x55, 0x70,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72,
+	0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x44,
+	0x22, 0xdc, 0x02, 0x0a, 0x08, 0x50, 0x61, 0x73, 0x73, 0x70, 0x6f, 0x72, 0x74, 0x12, 0x16, 0x0a,
+	0x06, 0x73, 0x65, 0x72, 0x69, 0x65, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73,
+	0x65, 0x72, 0x69, 0x65, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x1c, 0x0a,
+	0x09, 0x66, 0x69, 0x72, 0x73, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x09, 0x66, 0x69, 0x72, 0x73, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1e, 0x0a, 0x0a, 0x6d,
+	0x69, 0x64, 0x64, 0x6c, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0a, 0x6d, 0x69, 0x64, 0x64, 0x6c, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x6c,
+	0x61, 0x73, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6c,
+	0x61, 0x73, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x69, 0x73, 0x73, 0x75, 0x65,
+	0x64, 0x42, 0x79, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x69, 0x73, 0x73, 0x75, 0x65,
+	0x64, 0x42, 0x79, 0x12, 0x36, 0x0a, 0x08, 0x69, 0x73, 0x73, 0x75, 0x65, 0x64, 0x41, 0x74, 0x18,
+	0x07, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d,
+	0x70, 0x52, 0x08, 0x69, 0x73, 0x73, 0x75, 0x65, 0x64, 0x41, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x61,
+	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x64,
+	0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x1e, 0x0a, 0x0a, 0x62, 0x69, 0x72, 0x74, 0x68, 0x70, 0x6c,
+	0x61, 0x63, 0x65, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x62, 0x69, 0x72, 0x74, 0x68,
+	0x70, 0x6c, 0x61, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x09, 0x62, 0x69, 0x72, 0x74, 0x68, 0x64, 0x61,
+	0x74, 0x65, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
+	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73,
+	0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x62, 0x69, 0x72, 0x74, 0x68, 0x64, 0x61, 0x74, 0x65, 0x32,
+	0x89, 0x05, 0x0a, 0x07, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x9b, 0x01, 0x0a, 0x06,
+	0x53, 0x69, 0x67, 0x6e, 0x49, 0x6e, 0x12, 0x19, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65,
+	0x5f, 0x70, 0x62, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x49, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x1a, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x5f, 0x70, 0x62, 0x2e, 0x53,
+	0x69, 0x67, 0x6e, 0x49, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x5a, 0x82,
+	0xd3, 0xe4, 0x93, 0x02, 0x15, 0x22, 0x10, 0x2f, 0x76, 0x31, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x2f,
+	0x73, 0x69, 0x67, 0x6e, 0x2d, 0x69, 0x6e, 0x3a, 0x01, 0x2a, 0x92, 0x41, 0x3c, 0x12, 0x1c, 0xd0,
+	0x90, 0xd0, 0xb2, 0xd1, 0x82, 0xd0, 0xbe, 0xd1, 0x80, 0xd0, 0xb8, 0xd0, 0xb7, 0xd0, 0xbe, 0xd0,
+	0xb2, 0xd0, 0xb0, 0xd1, 0x82, 0xd1, 0x8c, 0xd1, 0x81, 0xd1, 0x8f, 0x1a, 0x1c, 0xd0, 0x90, 0xd0,
+	0xb2, 0xd1, 0x82, 0xd0, 0xbe, 0xd1, 0x80, 0xd0, 0xb8, 0xd0, 0xb7, 0xd0, 0xbe, 0xd0, 0xb2, 0xd0,
+	0xb0, 0xd1, 0x82, 0xd1, 0x8c, 0xd1, 0x81, 0xd1, 0x8f, 0x12, 0xa6, 0x01, 0x0a, 0x08, 0x53, 0x65,
+	0x6e, 0x64, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x1b, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65,
+	0x5f, 0x70, 0x62, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x5f, 0x70, 0x62,
+	0x2e, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x5f, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x20, 0x22, 0x1b, 0x2f, 0x76, 0x31, 0x2f, 0x61,
+	0x75, 0x74, 0x68, 0x2f, 0x7b, 0x75, 0x73, 0x65, 0x72, 0x49, 0x44, 0x7d, 0x2f, 0x73, 0x65, 0x6e,
+	0x64, 0x2d, 0x63, 0x6f, 0x64, 0x65, 0x3a, 0x01, 0x2a, 0x92, 0x41, 0x36, 0x12, 0x19, 0xd0, 0x9e,
+	0xd1, 0x82, 0xd0, 0xbf, 0xd1, 0x80, 0xd0, 0xb0, 0xd0, 0xb2, 0xd0, 0xb8, 0xd1, 0x82, 0xd1, 0x8c,
+	0x20, 0xd0, 0xba, 0xd0, 0xbe, 0xd0, 0xb4, 0x1a, 0x19, 0xd0, 0x9e, 0xd1, 0x82, 0xd0, 0xbf, 0xd1,
+	0x80, 0xd0, 0xb0, 0xd0, 0xb2, 0xd0, 0xb8, 0xd1, 0x82, 0xd1, 0x8c, 0x20, 0xd0, 0xba, 0xd0, 0xbe,
+	0xd0, 0xb4, 0x12, 0x9d, 0x01, 0x0a, 0x06, 0x53, 0x69, 0x67, 0x6e, 0x55, 0x70, 0x12, 0x19, 0x2e,
+	0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x5f, 0x70, 0x62, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x55,
+	0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69,
+	0x6c, 0x65, 0x5f, 0x70, 0x62, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x55, 0x70, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x5c, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x15, 0x22, 0x10, 0x2f, 0x76,
+	0x31, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x73, 0x69, 0x67, 0x6e, 0x2d, 0x75, 0x70, 0x3a, 0x01,
+	0x2a, 0x92, 0x41, 0x3e, 0x12, 0x1d, 0xd0, 0xa1, 0xd0, 0xbe, 0xd0, 0xb7, 0xd0, 0xb4, 0xd0, 0xb0,
+	0xd1, 0x82, 0xd1, 0x8c, 0x20, 0xd0, 0xb0, 0xd0, 0xba, 0xd0, 0xba, 0xd0, 0xb0, 0xd1, 0x83, 0xd0,
+	0xbd, 0xd1, 0x82, 0x1a, 0x1d, 0xd0, 0xa1, 0xd0, 0xbe, 0xd0, 0xb7, 0xd0, 0xb4, 0xd0, 0xb0, 0xd1,
+	0x82, 0xd1, 0x8c, 0x20, 0xd0, 0xb0, 0xd0, 0xba, 0xd0, 0xba, 0xd0, 0xb0, 0xd1, 0x83, 0xd0, 0xbd,
+	0xd1, 0x82, 0x12, 0x96, 0x01, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x50, 0x61, 0x73, 0x73, 0x70, 0x6f,
+	0x72, 0x74, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x14, 0x2e, 0x70, 0x72, 0x6f,
+	0x66, 0x69, 0x6c, 0x65, 0x5f, 0x70, 0x62, 0x2e, 0x50, 0x61, 0x73, 0x73, 0x70, 0x6f, 0x72, 0x74,
+	0x22, 0x59, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x0e, 0x12, 0x0c, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61,
+	0x73, 0x73, 0x70, 0x6f, 0x72, 0x74, 0x92, 0x41, 0x42, 0x12, 0x1f, 0xd0, 0x9f, 0xd0, 0xbe, 0xd0,
+	0xbb, 0xd1, 0x83, 0xd1, 0x87, 0xd0, 0xb8, 0xd1, 0x82, 0xd1, 0x8c, 0x20, 0xd0, 0xbf, 0xd0, 0xb0,
+	0xd1, 0x81, 0xd0, 0xbf, 0xd0, 0xbe, 0xd1, 0x80, 0xd1, 0x82, 0x1a, 0x1f, 0xd0, 0x9f, 0xd0, 0xbe,
+	0xd0, 0xbb, 0xd1, 0x83, 0xd1, 0x87, 0xd0, 0xb8, 0xd1, 0x82, 0xd1, 0x8c, 0x20, 0xd0, 0xbf, 0xd0,
+	0xb0, 0xd1, 0x81, 0xd0, 0xbf, 0xd0, 0xbe, 0xd1, 0x80, 0xd1, 0x82, 0x42, 0x12, 0x5a, 0x10, 0x2f,
+	0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x3b, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -143,19 +568,35 @@ func file_api_profile_profile_proto_rawDescGZIP() []byte {
 	return file_api_profile_profile_proto_rawDescData
 }
 
-var file_api_profile_profile_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_api_profile_profile_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_api_profile_profile_proto_goTypes = []interface{}{
-	(*AuthorizeRequest)(nil),  // 0: profile_pb.AuthorizeRequest
-	(*AuthorizeResponse)(nil), // 1: profile_pb.AuthorizeResponse
+	(*SignInRequest)(nil),         // 0: profile_pb.SignInRequest
+	(*SignInResponse)(nil),        // 1: profile_pb.SignInResponse
+	(*SendCodeRequest)(nil),       // 2: profile_pb.SendCodeRequest
+	(*SendCodeResponse)(nil),      // 3: profile_pb.SendCodeResponse
+	(*SignUpRequest)(nil),         // 4: profile_pb.SignUpRequest
+	(*SignUpResponse)(nil),        // 5: profile_pb.SignUpResponse
+	(*Passport)(nil),              // 6: profile_pb.Passport
+	(*timestamppb.Timestamp)(nil), // 7: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),         // 8: google.protobuf.Empty
 }
 var file_api_profile_profile_proto_depIdxs = []int32{
-	0, // 0: profile_pb.Profile.Authorize:input_type -> profile_pb.AuthorizeRequest
-	1, // 1: profile_pb.Profile.Authorize:output_type -> profile_pb.AuthorizeResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	6, // 0: profile_pb.SignUpRequest.passport:type_name -> profile_pb.Passport
+	7, // 1: profile_pb.Passport.issuedAt:type_name -> google.protobuf.Timestamp
+	7, // 2: profile_pb.Passport.birthdate:type_name -> google.protobuf.Timestamp
+	0, // 3: profile_pb.Profile.SignIn:input_type -> profile_pb.SignInRequest
+	2, // 4: profile_pb.Profile.SendCode:input_type -> profile_pb.SendCodeRequest
+	4, // 5: profile_pb.Profile.SignUp:input_type -> profile_pb.SignUpRequest
+	8, // 6: profile_pb.Profile.GetPassport:input_type -> google.protobuf.Empty
+	1, // 7: profile_pb.Profile.SignIn:output_type -> profile_pb.SignInResponse
+	3, // 8: profile_pb.Profile.SendCode:output_type -> profile_pb.SendCodeResponse
+	5, // 9: profile_pb.Profile.SignUp:output_type -> profile_pb.SignUpResponse
+	6, // 10: profile_pb.Profile.GetPassport:output_type -> profile_pb.Passport
+	7, // [7:11] is the sub-list for method output_type
+	3, // [3:7] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_api_profile_profile_proto_init() }
@@ -165,7 +606,7 @@ func file_api_profile_profile_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_api_profile_profile_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AuthorizeRequest); i {
+			switch v := v.(*SignInRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -177,7 +618,67 @@ func file_api_profile_profile_proto_init() {
 			}
 		}
 		file_api_profile_profile_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AuthorizeResponse); i {
+			switch v := v.(*SignInResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_profile_profile_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SendCodeRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_profile_profile_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SendCodeResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_profile_profile_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SignUpRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_profile_profile_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SignUpResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_profile_profile_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Passport); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -195,7 +696,7 @@ func file_api_profile_profile_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_profile_profile_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -221,7 +722,10 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ProfileClient interface {
-	Authorize(ctx context.Context, in *AuthorizeRequest, opts ...grpc.CallOption) (*AuthorizeResponse, error)
+	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
+	SendCode(ctx context.Context, in *SendCodeRequest, opts ...grpc.CallOption) (*SendCodeResponse, error)
+	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error)
+	GetPassport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Passport, error)
 }
 
 type profileClient struct {
@@ -232,9 +736,36 @@ func NewProfileClient(cc grpc.ClientConnInterface) ProfileClient {
 	return &profileClient{cc}
 }
 
-func (c *profileClient) Authorize(ctx context.Context, in *AuthorizeRequest, opts ...grpc.CallOption) (*AuthorizeResponse, error) {
-	out := new(AuthorizeResponse)
-	err := c.cc.Invoke(ctx, "/profile_pb.Profile/Authorize", in, out, opts...)
+func (c *profileClient) SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error) {
+	out := new(SignInResponse)
+	err := c.cc.Invoke(ctx, "/profile_pb.Profile/SignIn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *profileClient) SendCode(ctx context.Context, in *SendCodeRequest, opts ...grpc.CallOption) (*SendCodeResponse, error) {
+	out := new(SendCodeResponse)
+	err := c.cc.Invoke(ctx, "/profile_pb.Profile/SendCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *profileClient) SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error) {
+	out := new(SignUpResponse)
+	err := c.cc.Invoke(ctx, "/profile_pb.Profile/SignUp", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *profileClient) GetPassport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Passport, error) {
+	out := new(Passport)
+	err := c.cc.Invoke(ctx, "/profile_pb.Profile/GetPassport", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -243,35 +774,101 @@ func (c *profileClient) Authorize(ctx context.Context, in *AuthorizeRequest, opt
 
 // ProfileServer is the server API for Profile service.
 type ProfileServer interface {
-	Authorize(context.Context, *AuthorizeRequest) (*AuthorizeResponse, error)
+	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
+	SendCode(context.Context, *SendCodeRequest) (*SendCodeResponse, error)
+	SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error)
+	GetPassport(context.Context, *emptypb.Empty) (*Passport, error)
 }
 
 // UnimplementedProfileServer can be embedded to have forward compatible implementations.
 type UnimplementedProfileServer struct {
 }
 
-func (*UnimplementedProfileServer) Authorize(context.Context, *AuthorizeRequest) (*AuthorizeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Authorize not implemented")
+func (*UnimplementedProfileServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
+}
+func (*UnimplementedProfileServer) SendCode(context.Context, *SendCodeRequest) (*SendCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendCode not implemented")
+}
+func (*UnimplementedProfileServer) SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
+}
+func (*UnimplementedProfileServer) GetPassport(context.Context, *emptypb.Empty) (*Passport, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPassport not implemented")
 }
 
 func RegisterProfileServer(s *grpc.Server, srv ProfileServer) {
 	s.RegisterService(&_Profile_serviceDesc, srv)
 }
 
-func _Profile_Authorize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AuthorizeRequest)
+func _Profile_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignInRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProfileServer).Authorize(ctx, in)
+		return srv.(ProfileServer).SignIn(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/profile_pb.Profile/Authorize",
+		FullMethod: "/profile_pb.Profile/SignIn",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProfileServer).Authorize(ctx, req.(*AuthorizeRequest))
+		return srv.(ProfileServer).SignIn(ctx, req.(*SignInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Profile_SendCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfileServer).SendCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/profile_pb.Profile/SendCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfileServer).SendCode(ctx, req.(*SendCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Profile_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignUpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfileServer).SignUp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/profile_pb.Profile/SignUp",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfileServer).SignUp(ctx, req.(*SignUpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Profile_GetPassport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfileServer).GetPassport(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/profile_pb.Profile/GetPassport",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfileServer).GetPassport(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -281,8 +878,20 @@ var _Profile_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*ProfileServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Authorize",
-			Handler:    _Profile_Authorize_Handler,
+			MethodName: "SignIn",
+			Handler:    _Profile_SignIn_Handler,
+		},
+		{
+			MethodName: "SendCode",
+			Handler:    _Profile_SendCode_Handler,
+		},
+		{
+			MethodName: "SignUp",
+			Handler:    _Profile_SignUp_Handler,
+		},
+		{
+			MethodName: "GetPassport",
+			Handler:    _Profile_GetPassport_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

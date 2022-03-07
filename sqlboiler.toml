@@ -1,0 +1,14 @@
+output = "internal/pkg/store/models"
+wipe = true
+no-tests = true
+no-hooks = true
+
+[psql]
+dbname = "profile"
+user = "postgres"
+host = "localhost"
+sslmode = "disable"
+pass = "postgres"
+port = 5433
+schema = "public"
+blacklist = ["goose_db_version"]

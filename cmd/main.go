@@ -2,43 +2,73 @@ package main
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	_ "github.com/ibks-bank/profile/cmd/swagger"
+	"github.com/ibks-bank/profile/config"
 	"github.com/ibks-bank/profile/internal/app/profile"
+	"github.com/ibks-bank/profile/internal/pkg/auth"
+	"github.com/ibks-bank/profile/internal/pkg/store"
 	gw "github.com/ibks-bank/profile/pkg/profile"
+	_ "github.com/lib/pq"
 	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
-	lis, err := net.Listen("tcp", ":8080")
+	ctx := context.Background()
+
+	conf := config.GetConfig()
+	grpcPort := strconv.FormatInt(conf.Server.GrpcPort, 10)
+	tcpPort := strconv.FormatInt(conf.Server.TcpPort, 10)
+
+	pgConnString := fmt.Sprintf(
+		"port=%d host=%s user=%s password=%s dbname=%s sslmode=disable",
+		conf.Database.Port,
+		conf.Database.Address,
+		conf.Database.User,
+		conf.Database.Password,
+		conf.Database.Name)
+
+	postgres, err := sql.Open("postgres", pgConnString)
+	if err != nil {
+		log.Fatal("can't open database")
+	}
+	st := store.New(postgres)
+
+	auther := auth.NewAuthorizer(
+		conf.Auth.SigningKey,
+		conf.Auth.HashSalt,
+		time.Duration(conf.Auth.TokenTTL)*time.Second,
+		st,
+	)
+
+	lis, err := net.Listen("tcp", ":"+grpcPort)
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
 	}
 
-	// Create a gRPC server object
-	s := grpc.NewServer()
-	// Attach the Greeter service to the server
+	s := grpc.NewServer(grpc.UnaryInterceptor(auth.Interceptor))
 	gw.RegisterProfileServer(
 		s,
-		profile.NewServer(),
+		profile.NewServer(st, auther),
 	)
-	// Serve gRPC server
-	log.Println("Serving gRPC on 0.0.0.0:8080")
+	log.Println("Serving gRPC on 0.0.0.0:" + grpcPort)
 	go func() {
 		log.Fatalln(s.Serve(lis))
 	}()
 
-	// Create a client connection to the gRPC server we just started
-	// This is where the gRPC-Gateway proxies the requests
 	conn, err := grpc.DialContext(
 		context.Background(),
-		"0.0.0.0:8080",
+		"0.0.0.0:"+grpcPort,
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -46,9 +76,14 @@ func main() {
 		log.Fatalln("Failed to dial server:", err)
 	}
 
-	gwmux := runtime.NewServeMux()
-	// Register Greeter
-	err = gw.RegisterProfileHandler(context.Background(), gwmux, conn)
+	gwmux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(func(s string) (string, bool) {
+		if s == auth.TokenKey {
+			return s, true
+		}
+
+		return s, false
+	}))
+	err = gw.RegisterProfileHandler(ctx, gwmux, conn)
 	if err != nil {
 		log.Fatalln("Failed to register gateway:", err)
 	}
@@ -57,7 +92,7 @@ func main() {
 	mux.Handle("/", gwmux)
 
 	gwServer := &http.Server{
-		Addr:    ":8090",
+		Addr:    ":" + tcpPort,
 		Handler: mux,
 	}
 
@@ -69,6 +104,6 @@ func main() {
 	sh := http.StripPrefix("/docs/", staticServer)
 	mux.Handle("/docs/", sh)
 
-	log.Println("Serving gRPC-Gateway on http://0.0.0.0:8090")
+	log.Println("Serving gRPC-Gateway on http://0.0.0.0:" + tcpPort)
 	log.Fatalln(gwServer.ListenAndServe())
 }
