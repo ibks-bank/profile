@@ -14,7 +14,7 @@ services:
 
   url_shortener:
     container_name: profile
-    image: ujuzy/profile
+    image: ujuzy/profile:alpha.1
     environment:
       #AUTH
       - SIGNING_KEY=your_signing_key
