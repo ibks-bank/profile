@@ -7,7 +7,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -28,8 +27,8 @@ func main() {
 	ctx := context.Background()
 
 	conf := config.GetConfig()
-	grpcPort := strconv.FormatInt(conf.Server.GrpcPort, 10)
-	tcpPort := strconv.FormatInt(conf.Server.TcpPort, 10)
+	grpcPort := "3002"
+	tcpPort := "3001"
 
 	pgConnString := fmt.Sprintf(
 		"port=%d host=%s user=%s password=%s dbname=%s sslmode=disable",

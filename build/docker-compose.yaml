@@ -1,0 +1,42 @@
+version: '3.7'
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5433:5432'
+    volumes:
+      - ../sql:/docker-entrypoint-initdb.d
+
+  url_shortener:
+    container_name: profile
+    image: ujuzy/profile
+    environment:
+      #AUTH
+      - SIGNING_KEY=your_signing_key
+      - HASH_SALT=your_hash_salt
+      - TOKEN_TTL=86400
+      - EMAIL_2FA=your@email.com
+      - PASSWORD_2FA=your_password
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+
+      # Postgres
+      - PG_IP=localhost
+      - PG_PORT=5433
+      - PG_DATABASE=profile
+      - PG_USER=postgres
+      - PG_PASSWORD=postgres
+    ports:
+      #TCP
+      - '3001:3001'
+      #GRPC
+      - '3002:3002'
+    volumes:
+      - ./configs:/configs
+    depends_on:
+      - postgres

@@ -10,13 +10,7 @@ import (
 
 type configuration struct {
 	Auth     *AuthConfiguration
-	Server   *ServerConfiguration
 	Database *DatabaseConfiguration
-}
-
-type ServerConfiguration struct {
-	TcpPort  int64
-	GrpcPort int64
 }
 
 type AuthConfiguration struct {
@@ -54,20 +48,7 @@ func readConfig() *configuration {
 		log.Println("Can't load config file")
 	}
 
-	value, ok := os.LookupEnv("TCP_PORT")
-	tcpPort, err := strconv.ParseInt(value, 10, 64)
-	if !ok || err != nil {
-		log.Println("No tcp port passed. Using default 3001 port to run tcp server")
-		tcpPort = 3001
-	}
-	value, ok = os.LookupEnv("GRPC_PORT")
-	grpcPort, err := strconv.ParseInt(value, 10, 64)
-	if !ok || err != nil {
-		log.Println("No tcp port passed. Using default 3002 port to run grpc server")
-		grpcPort = 3002
-	}
-
-	value, ok = os.LookupEnv("PG_PORT")
+	value, ok := os.LookupEnv("PG_PORT")
 	pgPort, err := strconv.ParseInt(value, 10, 64)
 	if !ok || err != nil {
 		log.Println("No postgres port passed. Using default 5432 PostgreSQL port")
@@ -90,10 +71,6 @@ func readConfig() *configuration {
 			Password2FA: os.Getenv("PASSWORD_2FA"),
 			SmtpHost:    os.Getenv("SMTP_HOST"),
 			SmtpPort:    os.Getenv("SMTP_PORT"),
-		},
-		Server: &ServerConfiguration{
-			TcpPort:  tcpPort,
-			GrpcPort: grpcPort,
 		},
 		Database: &DatabaseConfiguration{
 			Address:  os.Getenv("PG_IP"),
