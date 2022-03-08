@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package profile_pb;
+
+option go_package = "/profile;profile";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service Profile {
+  rpc SignIn (SignInRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/auth/sign-in"
+      body: "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Авторизоваться"
+      description: "Необходимо ввести логин и пароль. Запускает процесс двухфакторной аутентификации"
+    };
+  }
+
+  rpc SignUp (SignUpRequest) returns (SignUpResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/sign-up"
+      body: "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Создать аккаунт"
+      description: "Создать аккаунт"
+    };
+  }
+
+  rpc SubmitCode (SubmitCodeRequest) returns (SubmitCodeResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/submit-code"
+      body: "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Ввести код из письма"
+      description: "Необходимо ввести код из письма. Отдает токен доступа"
+    };
+  }
+
+  rpc GetPassport (google.protobuf.Empty) returns (Passport) {
+    option (google.api.http).get = "/v1/passport";
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Получить паспорт"
+      description: "Получить паспорт"
+    };
+  }
+}
+
+message SignInRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message SignUpRequest {
+  string email = 1;
+  string password = 2;
+  Passport passport = 3;
+}
+
+message SignUpResponse {
+  int64 userID = 1;
+}
+
+message Passport {
+  string series = 1;
+  string number = 2;
+  string firstName = 3;
+  string middleName = 4;
+  string lastName = 5;
+  string issuedBy = 6;
+  google.protobuf.Timestamp issuedAt = 7;
+  string address = 8;
+  string birthplace = 9;
+  google.protobuf.Timestamp birthdate = 10;
+}
+
+message SubmitCodeRequest {
+  string email = 1;
+  string password = 2;
+  string code = 3;
+}
+
+message SubmitCodeResponse {
+  string token = 1;
+}
