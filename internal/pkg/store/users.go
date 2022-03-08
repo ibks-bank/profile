@@ -3,8 +3,9 @@ package store
 import (
 	"context"
 	"database/sql"
+	"errors"
 
-	"github.com/ibks-bank/profile/internal/pkg/errors"
+	cErrors "github.com/ibks-bank/profile/internal/pkg/errors"
 	"github.com/ibks-bank/profile/internal/pkg/store/models"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
@@ -15,7 +16,10 @@ func (st *store) GetUser(ctx context.Context, login, password string) (*models.U
 		models.UserWhere.Password.EQ(password),
 	).One(ctx, st.db)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't perform select")
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, err
+		}
+		return nil, cErrors.Wrap(err, "can't perform select")
 	}
 
 	return user, nil

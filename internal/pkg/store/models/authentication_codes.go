@@ -23,10 +23,11 @@ import (
 
 // AuthenticationCode is an object representing the database table.
 type AuthenticationCode struct {
-	ID        int64  `boil:"id" json:"id" toml:"id" yaml:"id"`
-	AccountID int64  `boil:"account_id" json:"account_id" toml:"account_id" yaml:"account_id"`
-	Code      string `boil:"code" json:"code" toml:"code" yaml:"code"`
-	Expired   bool   `boil:"expired" json:"expired" toml:"expired" yaml:"expired"`
+	ID        int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UserID    int64     `boil:"user_id" json:"user_id" toml:"user_id" yaml:"user_id"`
+	Code      string    `boil:"code" json:"code" toml:"code" yaml:"code"`
+	Expired   bool      `boil:"expired" json:"expired" toml:"expired" yaml:"expired"`
 
 	R *authenticationCodeR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L authenticationCodeL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -34,24 +35,28 @@ type AuthenticationCode struct {
 
 var AuthenticationCodeColumns = struct {
 	ID        string
-	AccountID string
+	CreatedAt string
+	UserID    string
 	Code      string
 	Expired   string
 }{
 	ID:        "id",
-	AccountID: "account_id",
+	CreatedAt: "created_at",
+	UserID:    "user_id",
 	Code:      "code",
 	Expired:   "expired",
 }
 
 var AuthenticationCodeTableColumns = struct {
 	ID        string
-	AccountID string
+	CreatedAt string
+	UserID    string
 	Code      string
 	Expired   string
 }{
 	ID:        "authentication_codes.id",
-	AccountID: "authentication_codes.account_id",
+	CreatedAt: "authentication_codes.created_at",
+	UserID:    "authentication_codes.user_id",
 	Code:      "authentication_codes.code",
 	Expired:   "authentication_codes.expired",
 }
@@ -79,6 +84,27 @@ func (w whereHelperint64) NIN(slice []int64) qm.QueryMod {
 		values = append(values, value)
 	}
 	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+}
+
+type whereHelpertime_Time struct{ field string }
+
+func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.EQ, x)
+}
+func (w whereHelpertime_Time) NEQ(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.NEQ, x)
+}
+func (w whereHelpertime_Time) LT(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpertime_Time) LTE(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpertime_Time) GT(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
 }
 
 type whereHelperstring struct{ field string }
@@ -115,26 +141,28 @@ func (w whereHelperbool) GTE(x bool) qm.QueryMod { return qmhelper.Where(w.field
 
 var AuthenticationCodeWhere = struct {
 	ID        whereHelperint64
-	AccountID whereHelperint64
+	CreatedAt whereHelpertime_Time
+	UserID    whereHelperint64
 	Code      whereHelperstring
 	Expired   whereHelperbool
 }{
 	ID:        whereHelperint64{field: "\"authentication_codes\".\"id\""},
-	AccountID: whereHelperint64{field: "\"authentication_codes\".\"account_id\""},
+	CreatedAt: whereHelpertime_Time{field: "\"authentication_codes\".\"created_at\""},
+	UserID:    whereHelperint64{field: "\"authentication_codes\".\"user_id\""},
 	Code:      whereHelperstring{field: "\"authentication_codes\".\"code\""},
 	Expired:   whereHelperbool{field: "\"authentication_codes\".\"expired\""},
 }
 
 // AuthenticationCodeRels is where relationship names are stored.
 var AuthenticationCodeRels = struct {
-	Account string
+	User string
 }{
-	Account: "Account",
+	User: "User",
 }
 
 // authenticationCodeR is where relationships are stored.
 type authenticationCodeR struct {
-	Account *User `boil:"Account" json:"Account" toml:"Account" yaml:"Account"`
+	User *User `boil:"User" json:"User" toml:"User" yaml:"User"`
 }
 
 // NewStruct creates a new relationship struct
@@ -146,9 +174,9 @@ func (*authenticationCodeR) NewStruct() *authenticationCodeR {
 type authenticationCodeL struct{}
 
 var (
-	authenticationCodeAllColumns            = []string{"id", "account_id", "code", "expired"}
-	authenticationCodeColumnsWithoutDefault = []string{"account_id", "code"}
-	authenticationCodeColumnsWithDefault    = []string{"id", "expired"}
+	authenticationCodeAllColumns            = []string{"id", "created_at", "user_id", "code", "expired"}
+	authenticationCodeColumnsWithoutDefault = []string{"user_id", "code"}
+	authenticationCodeColumnsWithDefault    = []string{"id", "created_at", "expired"}
 	authenticationCodePrimaryKeyColumns     = []string{"id"}
 )
 
@@ -243,10 +271,10 @@ func (q authenticationCodeQuery) Exists(ctx context.Context, exec boil.ContextEx
 	return count > 0, nil
 }
 
-// Account pointed to by the foreign key.
-func (o *AuthenticationCode) Account(mods ...qm.QueryMod) userQuery {
+// User pointed to by the foreign key.
+func (o *AuthenticationCode) User(mods ...qm.QueryMod) userQuery {
 	queryMods := []qm.QueryMod{
-		qm.Where("\"id\" = ?", o.AccountID),
+		qm.Where("\"id\" = ?", o.UserID),
 	}
 
 	queryMods = append(queryMods, mods...)
@@ -257,9 +285,9 @@ func (o *AuthenticationCode) Account(mods ...qm.QueryMod) userQuery {
 	return query
 }
 
-// LoadAccount allows an eager lookup of values, cached into the
+// LoadUser allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (authenticationCodeL) LoadAccount(ctx context.Context, e boil.ContextExecutor, singular bool, maybeAuthenticationCode interface{}, mods queries.Applicator) error {
+func (authenticationCodeL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool, maybeAuthenticationCode interface{}, mods queries.Applicator) error {
 	var slice []*AuthenticationCode
 	var object *AuthenticationCode
 
@@ -274,7 +302,7 @@ func (authenticationCodeL) LoadAccount(ctx context.Context, e boil.ContextExecut
 		if object.R == nil {
 			object.R = &authenticationCodeR{}
 		}
-		args = append(args, object.AccountID)
+		args = append(args, object.UserID)
 
 	} else {
 	Outer:
@@ -284,12 +312,12 @@ func (authenticationCodeL) LoadAccount(ctx context.Context, e boil.ContextExecut
 			}
 
 			for _, a := range args {
-				if a == obj.AccountID {
+				if a == obj.UserID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.AccountID)
+			args = append(args, obj.UserID)
 
 		}
 	}
@@ -329,22 +357,22 @@ func (authenticationCodeL) LoadAccount(ctx context.Context, e boil.ContextExecut
 
 	if singular {
 		foreign := resultSlice[0]
-		object.R.Account = foreign
+		object.R.User = foreign
 		if foreign.R == nil {
 			foreign.R = &userR{}
 		}
-		foreign.R.AccountAuthenticationCodes = append(foreign.R.AccountAuthenticationCodes, object)
+		foreign.R.AuthenticationCodes = append(foreign.R.AuthenticationCodes, object)
 		return nil
 	}
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.AccountID == foreign.ID {
-				local.R.Account = foreign
+			if local.UserID == foreign.ID {
+				local.R.User = foreign
 				if foreign.R == nil {
 					foreign.R = &userR{}
 				}
-				foreign.R.AccountAuthenticationCodes = append(foreign.R.AccountAuthenticationCodes, local)
+				foreign.R.AuthenticationCodes = append(foreign.R.AuthenticationCodes, local)
 				break
 			}
 		}
@@ -353,10 +381,10 @@ func (authenticationCodeL) LoadAccount(ctx context.Context, e boil.ContextExecut
 	return nil
 }
 
-// SetAccount of the authenticationCode to the related item.
-// Sets o.R.Account to related.
-// Adds o to related.R.AccountAuthenticationCodes.
-func (o *AuthenticationCode) SetAccount(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) error {
+// SetUser of the authenticationCode to the related item.
+// Sets o.R.User to related.
+// Adds o to related.R.AuthenticationCodes.
+func (o *AuthenticationCode) SetUser(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -366,7 +394,7 @@ func (o *AuthenticationCode) SetAccount(ctx context.Context, exec boil.ContextEx
 
 	updateQuery := fmt.Sprintf(
 		"UPDATE \"authentication_codes\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"account_id"}),
+		strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
 		strmangle.WhereClause("\"", "\"", 2, authenticationCodePrimaryKeyColumns),
 	)
 	values := []interface{}{related.ID, o.ID}
@@ -380,21 +408,21 @@ func (o *AuthenticationCode) SetAccount(ctx context.Context, exec boil.ContextEx
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.AccountID = related.ID
+	o.UserID = related.ID
 	if o.R == nil {
 		o.R = &authenticationCodeR{
-			Account: related,
+			User: related,
 		}
 	} else {
-		o.R.Account = related
+		o.R.User = related
 	}
 
 	if related.R == nil {
 		related.R = &userR{
-			AccountAuthenticationCodes: AuthenticationCodeSlice{o},
+			AuthenticationCodes: AuthenticationCodeSlice{o},
 		}
 	} else {
-		related.R.AccountAuthenticationCodes = append(related.R.AccountAuthenticationCodes, o)
+		related.R.AuthenticationCodes = append(related.R.AuthenticationCodes, o)
 	}
 
 	return nil
@@ -440,6 +468,13 @@ func (o *AuthenticationCode) Insert(ctx context.Context, exec boil.ContextExecut
 	}
 
 	var err error
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
+		}
+	}
 
 	nzDefaults := queries.NonZeroDefaultSet(authenticationCodeColumnsWithDefault, o)
 
@@ -637,6 +672,13 @@ func (o AuthenticationCodeSlice) UpdateAll(ctx context.Context, exec boil.Contex
 func (o *AuthenticationCode) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
 	if o == nil {
 		return errors.New("models: no authentication_codes provided for upsert")
+	}
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
+		}
 	}
 
 	nzDefaults := queries.NonZeroDefaultSet(authenticationCodeColumnsWithDefault, o)

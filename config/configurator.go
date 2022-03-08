@@ -23,6 +23,11 @@ type AuthConfiguration struct {
 	SigningKey string
 	HashSalt   string
 	TokenTTL   int64
+
+	Email2FA    string
+	Password2FA string
+	SmtpHost    string
+	SmtpPort    string
 }
 
 type DatabaseConfiguration struct {
@@ -78,9 +83,13 @@ func readConfig() *configuration {
 
 	return &configuration{
 		Auth: &AuthConfiguration{
-			SigningKey: os.Getenv("SIGNING_KEY"),
-			HashSalt:   os.Getenv("HASH_SALT"),
-			TokenTTL:   tokenTTL,
+			SigningKey:  os.Getenv("SIGNING_KEY"),
+			HashSalt:    os.Getenv("HASH_SALT"),
+			TokenTTL:    tokenTTL,
+			Email2FA:    os.Getenv("EMAIL_2FA"),
+			Password2FA: os.Getenv("PASSWORD_2FA"),
+			SmtpHost:    os.Getenv("SMTP_HOST"),
+			SmtpPort:    os.Getenv("SMTP_PORT"),
 		},
 		Server: &ServerConfiguration{
 			TcpPort:  tcpPort,

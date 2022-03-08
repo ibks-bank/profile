@@ -15,6 +15,7 @@ import (
 	"github.com/ibks-bank/profile/config"
 	"github.com/ibks-bank/profile/internal/app/profile"
 	"github.com/ibks-bank/profile/internal/pkg/auth"
+	"github.com/ibks-bank/profile/internal/pkg/email"
 	"github.com/ibks-bank/profile/internal/pkg/store"
 	gw "github.com/ibks-bank/profile/pkg/profile"
 	_ "github.com/lib/pq"
@@ -51,6 +52,13 @@ func main() {
 		st,
 	)
 
+	emailer := email.NewSender(
+		conf.Auth.Email2FA,
+		conf.Auth.Password2FA,
+		conf.Auth.SmtpHost,
+		conf.Auth.SmtpPort,
+	)
+
 	lis, err := net.Listen("tcp", ":"+grpcPort)
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
@@ -59,7 +67,7 @@ func main() {
 	s := grpc.NewServer(grpc.UnaryInterceptor(auth.Interceptor))
 	gw.RegisterProfileServer(
 		s,
-		profile.NewServer(st, auther),
+		profile.NewServer(st, auther, emailer),
 	)
 	log.Println("Serving gRPC on 0.0.0.0:" + grpcPort)
 	go func() {

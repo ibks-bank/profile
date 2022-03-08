@@ -79,17 +79,17 @@ var UserWhere = struct {
 
 // UserRels is where relationship names are stored.
 var UserRels = struct {
-	Passport                   string
-	AccountAuthenticationCodes string
+	Passport            string
+	AuthenticationCodes string
 }{
-	Passport:                   "Passport",
-	AccountAuthenticationCodes: "AccountAuthenticationCodes",
+	Passport:            "Passport",
+	AuthenticationCodes: "AuthenticationCodes",
 }
 
 // userR is where relationships are stored.
 type userR struct {
-	Passport                   *Passport               `boil:"Passport" json:"Passport" toml:"Passport" yaml:"Passport"`
-	AccountAuthenticationCodes AuthenticationCodeSlice `boil:"AccountAuthenticationCodes" json:"AccountAuthenticationCodes" toml:"AccountAuthenticationCodes" yaml:"AccountAuthenticationCodes"`
+	Passport            *Passport               `boil:"Passport" json:"Passport" toml:"Passport" yaml:"Passport"`
+	AuthenticationCodes AuthenticationCodeSlice `boil:"AuthenticationCodes" json:"AuthenticationCodes" toml:"AuthenticationCodes" yaml:"AuthenticationCodes"`
 }
 
 // NewStruct creates a new relationship struct
@@ -212,15 +212,15 @@ func (o *User) Passport(mods ...qm.QueryMod) passportQuery {
 	return query
 }
 
-// AccountAuthenticationCodes retrieves all the authentication_code's AuthenticationCodes with an executor via account_id column.
-func (o *User) AccountAuthenticationCodes(mods ...qm.QueryMod) authenticationCodeQuery {
+// AuthenticationCodes retrieves all the authentication_code's AuthenticationCodes with an executor.
+func (o *User) AuthenticationCodes(mods ...qm.QueryMod) authenticationCodeQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"authentication_codes\".\"account_id\"=?", o.ID),
+		qm.Where("\"authentication_codes\".\"user_id\"=?", o.ID),
 	)
 
 	query := AuthenticationCodes(queryMods...)
@@ -329,9 +329,9 @@ func (userL) LoadPassport(ctx context.Context, e boil.ContextExecutor, singular 
 	return nil
 }
 
-// LoadAccountAuthenticationCodes allows an eager lookup of values, cached into the
+// LoadAuthenticationCodes allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (userL) LoadAccountAuthenticationCodes(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+func (userL) LoadAuthenticationCodes(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
 	var slice []*User
 	var object *User
 
@@ -370,7 +370,7 @@ func (userL) LoadAccountAuthenticationCodes(ctx context.Context, e boil.ContextE
 
 	query := NewQuery(
 		qm.From(`authentication_codes`),
-		qm.WhereIn(`authentication_codes.account_id in ?`, args...),
+		qm.WhereIn(`authentication_codes.user_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -394,24 +394,24 @@ func (userL) LoadAccountAuthenticationCodes(ctx context.Context, e boil.ContextE
 	}
 
 	if singular {
-		object.R.AccountAuthenticationCodes = resultSlice
+		object.R.AuthenticationCodes = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
 				foreign.R = &authenticationCodeR{}
 			}
-			foreign.R.Account = object
+			foreign.R.User = object
 		}
 		return nil
 	}
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if local.ID == foreign.AccountID {
-				local.R.AccountAuthenticationCodes = append(local.R.AccountAuthenticationCodes, foreign)
+			if local.ID == foreign.UserID {
+				local.R.AuthenticationCodes = append(local.R.AuthenticationCodes, foreign)
 				if foreign.R == nil {
 					foreign.R = &authenticationCodeR{}
 				}
-				foreign.R.Account = local
+				foreign.R.User = local
 				break
 			}
 		}
@@ -467,22 +467,22 @@ func (o *User) SetPassport(ctx context.Context, exec boil.ContextExecutor, inser
 	return nil
 }
 
-// AddAccountAuthenticationCodes adds the given related objects to the existing relationships
+// AddAuthenticationCodes adds the given related objects to the existing relationships
 // of the user, optionally inserting them as new records.
-// Appends related to o.R.AccountAuthenticationCodes.
-// Sets related.R.Account appropriately.
-func (o *User) AddAccountAuthenticationCodes(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*AuthenticationCode) error {
+// Appends related to o.R.AuthenticationCodes.
+// Sets related.R.User appropriately.
+func (o *User) AddAuthenticationCodes(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*AuthenticationCode) error {
 	var err error
 	for _, rel := range related {
 		if insert {
-			rel.AccountID = o.ID
+			rel.UserID = o.ID
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
 				"UPDATE \"authentication_codes\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"account_id"}),
+				strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
 				strmangle.WhereClause("\"", "\"", 2, authenticationCodePrimaryKeyColumns),
 			)
 			values := []interface{}{o.ID, rel.ID}
@@ -496,25 +496,25 @@ func (o *User) AddAccountAuthenticationCodes(ctx context.Context, exec boil.Cont
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			rel.AccountID = o.ID
+			rel.UserID = o.ID
 		}
 	}
 
 	if o.R == nil {
 		o.R = &userR{
-			AccountAuthenticationCodes: related,
+			AuthenticationCodes: related,
 		}
 	} else {
-		o.R.AccountAuthenticationCodes = append(o.R.AccountAuthenticationCodes, related...)
+		o.R.AuthenticationCodes = append(o.R.AuthenticationCodes, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &authenticationCodeR{
-				Account: o,
+				User: o,
 			}
 		} else {
-			rel.R.Account = o
+			rel.R.User = o
 		}
 	}
 	return nil

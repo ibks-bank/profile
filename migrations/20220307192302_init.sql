@@ -29,9 +29,10 @@ create table if not exists passports
 create table if not exists authentication_codes
 (
     id         bigserial primary key,
-    account_id bigint  not null references users (id),
-    code       text    not null check ( code != '' ),
-    expired    boolean not null default false
+    created_at timestamp not null check ( created_at > '1970-01-01' ) default now(),
+    user_id    bigint    not null references users (id),
+    code       text      not null check ( code != '' ),
+    expired    boolean   not null                                     default false
 );
 
 alter table users

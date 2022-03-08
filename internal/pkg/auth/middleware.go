@@ -31,7 +31,7 @@ func Interceptor(
 	var err error
 
 	switch info.FullMethod {
-	case "/profile_pb.Profile/SignUp", "/profile_pb.Profile/SignIn":
+	case "/profile_pb.Profile/SignUp", "/profile_pb.Profile/SignIn", "/profile_pb.Profile/SubmitCode":
 	default:
 		ctx, err = authorize(ctx)
 		if err != nil {

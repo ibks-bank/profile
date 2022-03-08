@@ -10,7 +10,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 service Profile {
-  rpc SignIn (SignInRequest) returns (SignInResponse) {
+  rpc SignIn (SignInRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/v1/auth/sign-in"
       body: "*"
@@ -18,19 +18,7 @@ service Profile {
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Авторизоваться"
-      description: "Авторизоваться"
-    };
-  }
-
-  rpc SendCode (SendCodeRequest) returns (SendCodeResponse) {
-    option (google.api.http) = {
-      post: "/v1/auth/{userID}/send-code"
-      body: "*"
-    };
-
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      summary: "Отправить код"
-      description: "Отправить код"
+      description: "Необходимо ввести логин и пароль. Запускает процесс двухфакторной аутентификации"
     };
   }
 
@@ -43,6 +31,18 @@ service Profile {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Создать аккаунт"
       description: "Создать аккаунт"
+    };
+  }
+
+  rpc SubmitCode (SubmitCodeRequest) returns (SubmitCodeResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/submit-code"
+      body: "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Ввести код из письма"
+      description: "Необходимо ввести код из письма. Отдает токен доступа"
     };
   }
 
@@ -59,18 +59,6 @@ service Profile {
 message SignInRequest {
   string email = 1;
   string password = 2;
-}
-
-message SignInResponse {
-  string token = 1;
-}
-
-message SendCodeRequest {
-  int64 userID = 1;
-}
-
-message SendCodeResponse {
-  string code = 1;
 }
 
 message SignUpRequest {
@@ -94,4 +82,14 @@ message Passport {
   string address = 8;
   string birthplace = 9;
   google.protobuf.Timestamp birthdate = 10;
+}
+
+message SubmitCodeRequest {
+  string email = 1;
+  string password = 2;
+  string code = 3;
+}
+
+message SubmitCodeResponse {
+  string token = 1;
 }
