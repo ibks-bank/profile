@@ -20,6 +20,10 @@ func WrapMC(err error, msg string, code codes.Code) error {
 	return status.Error(code, err.Error())
 }
 
+func New(msg string) error {
+	return errors.New(msg)
+}
+
 func NewC(msg string, code codes.Code) error {
 	return status.Error(code, msg)
 }

@@ -7,22 +7,28 @@ import (
 )
 
 type sender struct {
-	from string
-	pass string
+	username string
+	password string
 
 	smtpServerHost string
 	smtpServerPort string
 }
 
 func NewSender(from, pass, serverHost, serverPort string) *sender {
-	return &sender{from: from, pass: pass, smtpServerHost: serverHost, smtpServerPort: serverPort}
+	return &sender{
+		username:       from,
+		password:       pass,
+		smtpServerHost: serverHost,
+		smtpServerPort: serverPort,
+	}
 }
 
 func (s *sender) Send(to, code string) error {
+	auth := loginAuth(s.username, s.password)
 	err := smtp.SendMail(
 		s.smtpServerHost+":"+s.smtpServerPort,
-		smtp.PlainAuth("", s.from, s.pass, s.smtpServerHost),
-		s.from, []string{to}, []byte(code),
+		auth,
+		s.username, []string{to}, []byte(code),
 	)
 	if err != nil {
 		return errors.Wrap(err, "can't send email")
