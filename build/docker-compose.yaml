@@ -7,6 +7,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=profile
     ports:
       - '5433:5432'
     volumes:
@@ -14,7 +15,7 @@ services:
 
   url_shortener:
     container_name: profile
-    image: ujuzy/profile:alpha.1
+    image: ujuzy/profile
     environment:
       #AUTH
       - SIGNING_KEY=your_signing_key
@@ -26,17 +27,15 @@ services:
       - SMTP_PORT=587
 
       # Postgres
-      - PG_IP=localhost
-      - PG_PORT=5433
+      - PG_IP=postgres
+      - PG_PORT=5432
       - PG_DATABASE=profile
       - PG_USER=postgres
       - PG_PASSWORD=postgres
     ports:
       #TCP
-      - '3001:3001'
+      - '3011:3001'
       #GRPC
-      - '3002:3002'
-    volumes:
-      - ./configs:/configs
+      - '3022:3002'
     depends_on:
       - postgres
