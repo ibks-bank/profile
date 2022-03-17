@@ -2,9 +2,9 @@ package email
 
 import (
 	"crypto/tls"
-	"net/smtp"
 
 	"github.com/ibks-bank/profile/internal/pkg/errors"
+	gomail "gopkg.in/mail.v2"
 )
 
 type sender struct {
@@ -12,10 +12,10 @@ type sender struct {
 	password string
 
 	smtpServerHost string
-	smtpServerPort string
+	smtpServerPort int64
 }
 
-func NewSender(from, pass, serverHost, serverPort string) *sender {
+func NewSender(from, pass, serverHost string, serverPort int64) *sender {
 	return &sender{
 		username:       from,
 		password:       pass,
@@ -25,44 +25,21 @@ func NewSender(from, pass, serverHost, serverPort string) *sender {
 }
 
 func (s *sender) Send(to, code string) error {
-	conn, err := tls.Dial("tcp", s.smtpServerHost+":"+s.smtpServerPort, &tls.Config{
-		InsecureSkipVerify: true,
-		ServerName:         s.smtpServerHost,
+	m := gomail.NewMessage()
+
+	m.SetHeaders(map[string][]string{
+		"From":    {s.username},
+		"To":      {to},
+		"Subject": {"Authentication code"},
 	})
-	if err != nil {
-		return errors.Wrap(err, "can't dial tls")
-	}
+	m.SetBody("text/plain", code)
 
-	smtpClient, err := smtp.NewClient(conn, s.smtpServerHost)
-	if err != nil {
-		return errors.Wrap(err, "can't create smtp client")
-	}
-	defer smtpClient.Quit()
+	d := gomail.NewDialer(s.smtpServerHost, int(s.smtpServerPort), s.username, s.password)
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
-	err = smtpClient.Auth(smtp.PlainAuth("", s.username, s.password, s.smtpServerHost))
+	err := d.DialAndSend(m)
 	if err != nil {
-		return errors.Wrap(err, "can't auth smtp")
-	}
-
-	err = smtpClient.Mail(s.username)
-	if err != nil {
-		return errors.Wrap(err, "can't do mail")
-	}
-
-	err = smtpClient.Rcpt(to)
-	if err != nil {
-		return errors.Wrap(err, "can't do rcpt")
-	}
-
-	w, err := smtpClient.Data()
-	if err != nil {
-		return errors.Wrap(err, "can't do data")
-	}
-	defer w.Close()
-
-	_, err = w.Write([]byte(code))
-	if err != nil {
-		return errors.Wrap(err, "can't write code")
+		return errors.Wrap(err, "can't dial and send")
 	}
 
 	return nil

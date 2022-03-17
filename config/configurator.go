@@ -21,7 +21,7 @@ type AuthConfiguration struct {
 	Email2FA    string
 	Password2FA string
 	SmtpHost    string
-	SmtpPort    string
+	SmtpPort    int64
 }
 
 type DatabaseConfiguration struct {
@@ -62,6 +62,12 @@ func readConfig() *configuration {
 		tokenTTL = 86400
 	}
 
+	value, ok = os.LookupEnv("SMTP_PORT")
+	smtpPort, err := strconv.ParseInt(value, 10, 64)
+	if !ok || err != nil {
+		log.Println("No smtp port passed")
+	}
+
 	return &configuration{
 		Auth: &AuthConfiguration{
 			SigningKey:  os.Getenv("SIGNING_KEY"),
@@ -70,7 +76,7 @@ func readConfig() *configuration {
 			Email2FA:    os.Getenv("EMAIL_2FA"),
 			Password2FA: os.Getenv("PASSWORD_2FA"),
 			SmtpHost:    os.Getenv("SMTP_HOST"),
-			SmtpPort:    os.Getenv("SMTP_PORT"),
+			SmtpPort:    smtpPort,
 		},
 		Database: &DatabaseConfiguration{
 			Address:  os.Getenv("PG_IP"),
