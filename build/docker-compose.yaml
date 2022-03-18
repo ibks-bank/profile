@@ -37,5 +37,7 @@ services:
       - '3011:3001'
       #GRPC
       - '3022:3002'
+    volumes:
+      - '/etc/ssl/certs:/etc/ssl/certs'
     depends_on:
       - postgres

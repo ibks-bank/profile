@@ -7,8 +7,10 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/golang/glog"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	_ "github.com/ibks-bank/profile/cmd/swagger"
 	"github.com/ibks-bank/profile/config"
@@ -96,7 +98,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/", gwmux)
+	mux.Handle("/", allowCORS(gwmux))
 
 	gwServer := &http.Server{
 		Addr:    ":" + tcpPort,
@@ -113,4 +115,26 @@ func main() {
 
 	log.Println("Serving gRPC-Gateway on http://0.0.0.0:" + tcpPort)
 	log.Fatalln(gwServer.ListenAndServe())
+}
+
+func allowCORS(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if origin := r.Header.Get("Origin"); origin != "" {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			if r.Method == "OPTIONS" && r.Header.Get("Access-Control-Request-Method") != "" {
+				preflightHandler(w, r)
+				return
+			}
+		}
+		h.ServeHTTP(w, r)
+	})
+}
+
+func preflightHandler(w http.ResponseWriter, r *http.Request) {
+	headers := []string{"Content-Type", "Accept"}
+	w.Header().Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
+	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE"}
+	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
+	glog.Infof("preflight request for %s", r.URL.Path)
+	return
 }
