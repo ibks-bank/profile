@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	cErrors "github.com/ibks-bank/profile/internal/pkg/errors"
+	"github.com/ibks-bank/profile/internal/pkg/headers"
 	"github.com/ibks-bank/profile/internal/pkg/store/models"
 	"github.com/ibks-bank/profile/pkg/profile"
 	"google.golang.org/grpc/codes"
@@ -20,6 +21,10 @@ func (srv *Server) SignIn(ctx context.Context, req *profile.SignInRequest) (*emp
 			return nil, cErrors.WrapMC(err, "user not found", codes.NotFound)
 		}
 		return nil, cErrors.Wrap(err, "can't get user")
+	}
+
+	if headers.UseMock(ctx) {
+		return &emptypb.Empty{}, nil
 	}
 
 	code := uuid.New().String()

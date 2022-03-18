@@ -17,6 +17,7 @@ import (
 	"github.com/ibks-bank/profile/internal/app/profile"
 	"github.com/ibks-bank/profile/internal/pkg/auth"
 	"github.com/ibks-bank/profile/internal/pkg/email"
+	"github.com/ibks-bank/profile/internal/pkg/headers"
 	"github.com/ibks-bank/profile/internal/pkg/store"
 	gw "github.com/ibks-bank/profile/pkg/profile"
 	_ "github.com/lib/pq"
@@ -86,11 +87,16 @@ func main() {
 	}
 
 	gwmux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(func(s string) (string, bool) {
-		if s == auth.TokenKey {
-			return s, true
-		}
+		switch s {
+		case headers.TokenKey, headers.UseMockKey:
 
-		return s, false
+			return s, true
+
+		default:
+
+			return s, false
+
+		}
 	}))
 	err = gw.RegisterProfileHandler(ctx, gwmux, conn)
 	if err != nil {

@@ -2,18 +2,13 @@ package auth
 
 import (
 	"context"
+
 	"github.com/ibks-bank/profile/config"
 	"github.com/ibks-bank/profile/internal/pkg/errors"
+	"github.com/ibks-bank/profile/internal/pkg/headers"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"strings"
-)
-
-const (
-	UserKey  = "X-Auth-User"
-	TokenKey = "X-Auth-Token"
 )
 
 type userInfo struct {
@@ -31,7 +26,11 @@ func Interceptor(
 	var err error
 
 	switch info.FullMethod {
-	case "/profile_pb.Profile/SignUp", "/profile_pb.Profile/SignIn", "/profile_pb.Profile/SubmitCode":
+	case "/profile_pb.Profile/SignUp",
+		"/profile_pb.Profile/SignIn",
+		"/profile_pb.Profile/SubmitCode",
+		"/profile_pb.Profile/SetAuthenticationCode":
+
 	default:
 		ctx, err = authorize(ctx)
 		if err != nil {
@@ -45,28 +44,21 @@ func Interceptor(
 }
 
 func authorize(ctx context.Context) (context.Context, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return ctx, status.Errorf(codes.InvalidArgument, "Retrieving metadata is failed")
+	authToken, err := headers.AuthToken(ctx)
+	if err != nil {
+		return ctx, status.Errorf(status.Code(err), "can't get auth token")
 	}
 
-	authHeader, ok := md[strings.ToLower(TokenKey)]
-	if !ok {
-		return ctx, status.Errorf(codes.Unauthenticated, "Authorization token is not supplied")
-	}
-
-	token := authHeader[0]
-
-	username, password, err := ParseToken(token, []byte(config.GetConfig().Auth.SigningKey))
+	username, password, err := ParseToken(authToken, []byte(config.GetConfig().Auth.SigningKey))
 	if err != nil {
 		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
-	return context.WithValue(ctx, UserKey, userInfo{Username: username, Password: password}), nil
+	return context.WithValue(ctx, headers.UserKey, userInfo{Username: username, Password: password}), nil
 }
 
 func GetUserInfo(ctx context.Context) (*userInfo, error) {
-	user, ok := ctx.Value(UserKey).(userInfo)
+	user, ok := ctx.Value(headers.UserKey).(userInfo)
 	if !ok {
 		return nil, errors.NewC("user info not found in context", codes.Unauthenticated)
 	}

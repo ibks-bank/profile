@@ -18,7 +18,7 @@ service Profile {
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Авторизоваться"
-      description: "Необходимо ввести логин и пароль. Запускает процесс двухфакторной аутентификации"
+      description: "Необходимо ввести логин и пароль. Запускает процесс двухфакторной аутентификации (при заголовке x-use-mock=true не запускает)"
     };
   }
 
@@ -52,6 +52,19 @@ service Profile {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Получить паспорт"
       description: "Получить паспорт"
+    };
+  }
+
+  rpc SetAuthenticationCode(SetAuthenticationCodeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/qa-api/set-code"
+      body: "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Положить код аутентификации в базу"
+      description: "Необходимо для автотестов (чтобы не зависеть от smtp)"
+      tags: "QA"
     };
   }
 }
@@ -92,4 +105,9 @@ message SubmitCodeRequest {
 
 message SubmitCodeResponse {
   string token = 1;
+}
+
+message SetAuthenticationCodeRequest {
+  string code = 1;
+  int64 userID = 2;
 }
