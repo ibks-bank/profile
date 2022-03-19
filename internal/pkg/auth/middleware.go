@@ -2,12 +2,10 @@ package auth
 
 import (
 	"context"
-	"strings"
 
 	"github.com/ibks-bank/profile/config"
-	"github.com/ibks-bank/profile/internal/pkg/errors"
-	"github.com/ibks-bank/profile/internal/pkg/headers"
 	"github.com/ibks-bank/profile/internal/pkg/cerr"
+	"github.com/ibks-bank/profile/internal/pkg/headers"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
