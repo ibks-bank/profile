@@ -23,8 +23,7 @@ type storeInterface interface {
 }
 
 type authInterface interface {
-	HashPassword(password string) string
-	SignIn(ctx context.Context, login, password string) (string, error)
+	GetToken(login, password, salt string) (string, error)
 }
 
 type emailInterface interface {
