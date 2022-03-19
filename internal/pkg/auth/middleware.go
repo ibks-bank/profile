@@ -2,10 +2,12 @@ package auth
 
 import (
 	"context"
+	"strings"
 
 	"github.com/ibks-bank/profile/config"
 	"github.com/ibks-bank/profile/internal/pkg/errors"
 	"github.com/ibks-bank/profile/internal/pkg/headers"
+	"github.com/ibks-bank/profile/internal/pkg/cerr"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -60,7 +62,7 @@ func authorize(ctx context.Context) (context.Context, error) {
 func GetUserInfo(ctx context.Context) (*userInfo, error) {
 	user, ok := ctx.Value(headers.UserKey).(userInfo)
 	if !ok {
-		return nil, errors.NewC("user info not found in context", codes.Unauthenticated)
+		return nil, cerr.NewC("user info not found in context", codes.Unauthenticated)
 	}
 
 	return &user, nil

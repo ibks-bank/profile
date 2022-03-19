@@ -2,12 +2,12 @@ package profile
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
 	"github.com/google/uuid"
-	cErrors "github.com/ibks-bank/profile/internal/pkg/errors"
+	"github.com/ibks-bank/profile/internal/pkg/cerr"
 	"github.com/ibks-bank/profile/internal/pkg/headers"
+	"github.com/ibks-bank/profile/internal/pkg/store"
 	"github.com/ibks-bank/profile/internal/pkg/store/models"
 	"github.com/ibks-bank/profile/pkg/profile"
 	"google.golang.org/grpc/codes"
@@ -15,12 +15,13 @@ import (
 )
 
 func (srv *Server) SignIn(ctx context.Context, req *profile.SignInRequest) (*emptypb.Empty, error) {
-	user, err := srv.store.GetUser(ctx, req.GetEmail(), srv.auth.HashPassword(req.GetPassword()))
+	user, err := srv.store.GetUser(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, cErrors.WrapMC(err, "user not found", codes.NotFound)
+		if errors.Is(err, store.ErrNotFound) {
+			return nil, cerr.WrapMC(err, "user not found", codes.NotFound)
 		}
-		return nil, cErrors.Wrap(err, "can't get user")
+
+		return nil, cerr.Wrap(err, "can't get user")
 	}
 
 	if headers.UseMock(ctx) {
@@ -31,12 +32,12 @@ func (srv *Server) SignIn(ctx context.Context, req *profile.SignInRequest) (*emp
 
 	err = srv.email.Send(user.Email, code)
 	if err != nil {
-		return nil, cErrors.Wrap(err, "can't send code")
+		return nil, cerr.Wrap(err, "can't send code")
 	}
 
 	err = srv.store.InsertCode(ctx, &models.AuthenticationCode{UserID: user.ID, Code: code})
 	if err != nil {
-		return nil, cErrors.Wrap(err, "can't insert code")
+		return nil, cerr.Wrap(err, "can't insert code")
 	}
 
 	return &emptypb.Empty{}, nil

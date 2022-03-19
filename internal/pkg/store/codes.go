@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
-	cErrors "github.com/ibks-bank/profile/internal/pkg/errors"
+	"github.com/ibks-bank/profile/internal/pkg/cerr"
 	"github.com/ibks-bank/profile/internal/pkg/store/models"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -19,9 +19,9 @@ func (st *store) GetCode(ctx context.Context, code string) (*models.Authenticati
 	).One(ctx, st.db)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, err
+			return nil, cerr.Wrap(ErrNotFound, "code not found")
 		}
-		return nil, cErrors.Wrap(err, "can't get code")
+		return nil, cerr.Wrap(err, "can't get code")
 	}
 
 	return lastCode, nil
@@ -38,14 +38,14 @@ func (st *store) ExpireCode(ctx context.Context, code string, userID int64) erro
 		qm.OrderBy(`created_at desc`),
 	).One(ctx, st.db)
 	if err != nil {
-		return cErrors.Wrap(err, "can't get code")
+		return cerr.Wrap(err, "can't get code")
 	}
 
 	lastCode.Expired = true
 
 	_, err = lastCode.Update(ctx, st.db, boil.Whitelist(models.AuthenticationCodeColumns.Expired))
 	if err != nil {
-		return cErrors.Wrap(err, "can't update code")
+		return cerr.Wrap(err, "can't update code")
 	}
 
 	return nil

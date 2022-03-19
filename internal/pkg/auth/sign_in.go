@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go/v4"
-	"github.com/ibks-bank/profile/internal/pkg/errors"
 	"github.com/ibks-bank/profile/internal/pkg/store/models"
 )
 
@@ -23,38 +22,30 @@ type Claims struct {
 
 type authorizer struct {
 	key            string
-	salt           string
 	expireDuration time.Duration
 	store          store
 }
 
-func NewAuthorizer(key, salt string, expireDuration time.Duration, store store) *authorizer {
-	return &authorizer{key: key, salt: salt, expireDuration: expireDuration, store: store}
+func NewAuthorizer(key string, expireDuration time.Duration, store store) *authorizer {
+	return &authorizer{key: key, expireDuration: expireDuration, store: store}
 }
 
-func (a *authorizer) SignIn(ctx context.Context, login, password string) (string, error) {
-	password = a.HashPassword(password)
-
-	user, err := a.store.GetUser(ctx, login, password)
-	if err != nil {
-		return "", errors.Wrap(err, "can't get user")
-	}
-
+func (a *authorizer) GetToken(login, password, salt string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Claims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: jwt.At(time.Now().Add(a.expireDuration)),
 			IssuedAt:  jwt.At(time.Now()),
 		},
-		Username: user.Email,
-		Password: password,
+		Username: login,
+		Password: HashPassword(password, salt),
 	})
 
 	return token.SignedString([]byte(a.key))
 }
 
-func (a *authorizer) HashPassword(password string) string {
+func HashPassword(password, salt string) string {
 	pwd := sha256.New()
 	pwd.Write([]byte(password))
-	pwd.Write([]byte(a.salt))
+	pwd.Write([]byte(salt))
 	return fmt.Sprintf("%x", pwd.Sum(nil))
 }

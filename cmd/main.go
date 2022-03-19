@@ -49,7 +49,6 @@ func main() {
 
 	auther := auth.NewAuthorizer(
 		conf.Auth.SigningKey,
-		conf.Auth.HashSalt,
 		time.Duration(conf.Auth.TokenTTL)*time.Second,
 		st,
 	)
