@@ -6,7 +6,8 @@ create table if not exists users
     created_at  timestamp     not null check ( created_at > '1970-01-01' ) default now(),
     email       text unique   not null check ( email != '' ),
     password    text          not null check ( password != '' ),
-    passport_id bigint unique not null
+    passport_id bigint unique not null,
+    hash_salt   text unique   not null check ( hash_salt != '' )
 );
 
 create table if not exists passports
@@ -41,6 +42,9 @@ alter table users
 
 -- +goose Down
 -- +goose StatementBegin
+alter table if exists users
+    drop constraint fk_users_passports;
+drop table if exists authentication_codes;
 drop table if exists users;
 drop table if exists passports;
 -- +goose StatementEnd

@@ -3,7 +3,7 @@ package email
 import (
 	"crypto/tls"
 
-	"github.com/ibks-bank/profile/internal/pkg/errors"
+	"github.com/ibks-bank/profile/internal/pkg/cerr"
 	gomail "gopkg.in/mail.v2"
 )
 
@@ -39,7 +39,7 @@ func (s *sender) Send(to, code string) error {
 
 	err := d.DialAndSend(m)
 	if err != nil {
-		return errors.Wrap(err, "can't dial and send")
+		return cerr.Wrap(err, "can't dial and send")
 	}
 
 	return nil

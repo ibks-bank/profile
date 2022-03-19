@@ -6,7 +6,12 @@ import (
 	"errors"
 )
 
-var ErrNotFound = errors.New("not found")
+var (
+	ErrNotFound      = errors.New("not found")
+	ErrAlreadyExists = errors.New("already exists")
+)
+
+const errViolatesUnique = "violates unique"
 
 type store struct {
 	db *sql.DB
