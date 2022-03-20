@@ -7,6 +7,11 @@ generate:
 		--swagger_out=allow_merge=true,merge_file_name=api:./swagger \
 		--go_out=plugins=grpc:./pkg ./api/profile/profile.proto
 
+	protoc -I/usr/local/include -I. \
+		-Ivendor.protogen \
+		--grpc-gateway_out=logtostderr=true:./internal/pb \
+		--go_out=plugins=grpc:./internal/pb ./vendor.protogen/bank_account/bank_account.proto
+
 	statik -src=./swagger -dest ./cmd -p swagger
 
 .PHONY: migrate-up

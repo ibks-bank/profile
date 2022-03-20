@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/ibks-bank/profile/internal/pkg/cerr"
+	"github.com/ibks-bank/libs/cerr"
 	"github.com/ibks-bank/profile/internal/pkg/store/models"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"

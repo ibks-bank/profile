@@ -11,6 +11,7 @@ import (
 type configuration struct {
 	Auth     *AuthConfiguration
 	Database *DatabaseConfiguration
+	Server   *ServerConfiguration
 }
 
 type AuthConfiguration struct {
@@ -29,6 +30,10 @@ type DatabaseConfiguration struct {
 	Name     string
 	User     string
 	Password string
+}
+
+type ServerConfiguration struct {
+	BankAccountUrl string
 }
 
 var config *configuration
@@ -82,6 +87,9 @@ func readConfig() *configuration {
 			Name:     os.Getenv("PG_DATABASE"),
 			User:     os.Getenv("PG_USER"),
 			Password: os.Getenv("PG_PASSWORD"),
+		},
+		Server: &ServerConfiguration{
+			BankAccountUrl: os.Getenv("CLIENTS_BANK_ACCOUNT_URL"),
 		},
 	}
 }
