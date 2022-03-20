@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/ibks-bank/profile/internal/pkg/cerr"
+	"github.com/ibks-bank/libs/cerr"
 	"github.com/ibks-bank/profile/internal/pkg/store"
 	"github.com/ibks-bank/profile/pkg/profile"
 	"google.golang.org/grpc/codes"

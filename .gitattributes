@@ -2,3 +2,4 @@
 go.sum -diff
 ./internal/pkg/store/models/* -diff
 ./cmd/swagger/* -diff
+./internal/pb/* -diff

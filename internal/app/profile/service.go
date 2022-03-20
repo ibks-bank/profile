@@ -3,6 +3,7 @@ package profile
 import (
 	"context"
 
+	"github.com/ibks-bank/profile/internal/pb/bank_account"
 	"github.com/ibks-bank/profile/internal/pkg/store/models"
 	"github.com/ibks-bank/profile/pkg/profile"
 )
@@ -13,6 +14,8 @@ type Server struct {
 	store storeInterface
 	auth  authInterface
 	email emailInterface
+
+	bankAccount bank_account.BankAccountClient
 }
 
 type storeInterface interface {
@@ -33,6 +36,17 @@ type emailInterface interface {
 	Send(to, code string) error
 }
 
-func NewServer(store storeInterface, auth authInterface, email emailInterface) *Server {
-	return &Server{store: store, auth: auth, email: email}
+func NewServer(
+	store storeInterface,
+	auth authInterface,
+	email emailInterface,
+	bankAccount bank_account.BankAccountClient,
+) *Server {
+
+	return &Server{
+		store:       store,
+		auth:        auth,
+		email:       email,
+		bankAccount: bankAccount,
+	}
 }

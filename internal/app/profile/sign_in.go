@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
-	"github.com/ibks-bank/profile/internal/pkg/cerr"
+	"github.com/ibks-bank/libs/cerr"
 	"github.com/ibks-bank/profile/internal/pkg/store"
 	"github.com/ibks-bank/profile/internal/pkg/store/models"
 	"github.com/ibks-bank/profile/pkg/profile"

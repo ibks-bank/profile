@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/ibks-bank/profile/internal/pkg/auth"
-	"github.com/ibks-bank/profile/internal/pkg/cerr"
+	"github.com/ibks-bank/libs/auth"
+	"github.com/ibks-bank/libs/cerr"
 	"github.com/ibks-bank/profile/internal/pkg/store"
 	"github.com/ibks-bank/profile/pkg/profile"
 	"google.golang.org/grpc/codes"
@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (srv *Server) GetPassport(ctx context.Context, req *emptypb.Empty) (*profile.Passport, error) {
+func (srv *Server) GetPassport(ctx context.Context, _ *emptypb.Empty) (*profile.Passport, error) {
 	userInfo, err := auth.GetUserInfo(ctx)
 	if err != nil {
 		return nil, cerr.WrapMC(err, "can't get user info from context", codes.Unauthenticated)
