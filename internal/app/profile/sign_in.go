@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/ibks-bank/libs/cerr"
+	"github.com/ibks-bank/profile/internal/pkg/headers"
 	"github.com/ibks-bank/profile/internal/pkg/store"
 	"github.com/ibks-bank/profile/internal/pkg/store/models"
 	"github.com/ibks-bank/profile/pkg/profile"
@@ -21,6 +22,10 @@ func (srv *Server) SignIn(ctx context.Context, req *profile.SignInRequest) (*emp
 		}
 
 		return nil, cerr.Wrap(err, "can't get user")
+	}
+
+	if headers.UseMock(ctx) {
+		return &emptypb.Empty{}, nil
 	}
 
 	code := uuid.New().String()
