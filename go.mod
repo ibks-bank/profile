@@ -9,8 +9,8 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.9.0
-	github.com/ibks-bank/libs/auth v0.0.0-20220320135205-6590d9a21188
-	github.com/ibks-bank/libs/cerr v0.0.0-20220320134530-d51247524d6e
+	github.com/ibks-bank/libs/auth v1.0.1
+	github.com/ibks-bank/libs/cerr v1.0.0
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.4
 	github.com/rakyll/statik v0.1.7

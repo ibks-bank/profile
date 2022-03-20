@@ -31,8 +31,8 @@ func main() {
 	ctx := context.Background()
 
 	conf := config.GetConfig()
-	grpcPort := "3002"
-	tcpPort := "3001"
+	grpcPort := "3022"
+	tcpPort := "3011"
 
 	pgConnString := fmt.Sprintf(
 		"port=%d host=%s user=%s password=%s dbname=%s sslmode=disable",
@@ -94,14 +94,10 @@ func main() {
 
 	gwmux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(func(s string) (string, bool) {
 		switch s {
-		case headers.TokenKey, headers.UseMockKey:
-
+		case auth.TokenKey, headers.UseMockKey:
 			return s, true
-
 		default:
-
 			return s, false
-
 		}
 	}))
 	err = gw.RegisterProfileHandler(ctx, gwmux, conn)
