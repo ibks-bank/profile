@@ -4,9 +4,12 @@ import (
 	"context"
 
 	"github.com/ibks-bank/profile/internal/pkg/store/models"
+	"github.com/ibks-bank/profile/pkg/profile"
 )
 
 type Server struct {
+	profile.UnimplementedProfileServer
+
 	store storeInterface
 	auth  authInterface
 	email emailInterface

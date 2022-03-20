@@ -9,20 +9,21 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.9.0
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.2.1-0.20191011153232-f91d3411e481
 	github.com/rakyll/statik v0.1.7
 	github.com/volatiletech/sqlboiler/v4 v4.8.6
 	github.com/volatiletech/strmangle v0.0.2
-	google.golang.org/genproto v0.0.0-20220304144024-325a89244dc8
-	google.golang.org/grpc v1.44.0
+	google.golang.org/genproto v0.0.0-20220317150908-0efb43f6373e
+	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/mail.v2 v2.3.1
 )
 
 require (
 	github.com/ghodss/yaml v1.0.0 // indirect
+	github.com/ibks-bank/profile/pkg/profile v0.0.0-00010101000000-000000000000 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/spf13/cast v1.4.1 // indirect
@@ -35,3 +36,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
+
+replace github.com/ibks-bank/profile/pkg/profile => ./pkg/profile
