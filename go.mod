@@ -3,15 +3,16 @@ module github.com/ibks-bank/profile
 go 1.18
 
 require (
-	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/friendsofgo/errors v0.9.2
 	github.com/golang/glog v1.0.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.9.0
+	github.com/ibks-bank/libs/auth v0.0.0-20220320135205-6590d9a21188
+	github.com/ibks-bank/libs/cerr v0.0.0-20220320134530-d51247524d6e
 	github.com/joho/godotenv v1.4.0
-	github.com/lib/pq v1.2.1-0.20191011153232-f91d3411e481
+	github.com/lib/pq v1.10.4
 	github.com/rakyll/statik v0.1.7
 	github.com/volatiletech/sqlboiler/v4 v4.8.6
 	github.com/volatiletech/strmangle v0.0.2
@@ -22,8 +23,8 @@ require (
 )
 
 require (
+	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
-	github.com/ibks-bank/profile/pkg/profile v0.0.0-00010101000000-000000000000 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/spf13/cast v1.4.1 // indirect
@@ -36,5 +37,3 @@ require (
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
-
-replace github.com/ibks-bank/profile/pkg/profile => ./pkg/profile

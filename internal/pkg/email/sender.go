@@ -3,7 +3,7 @@ package email
 import (
 	"crypto/tls"
 
-	"github.com/ibks-bank/profile/internal/pkg/cerr"
+	"github.com/ibks-bank/libs/cerr"
 	gomail "gopkg.in/mail.v2"
 )
 

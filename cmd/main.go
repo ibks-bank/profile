@@ -12,10 +12,11 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/ibks-bank/libs/auth"
 	_ "github.com/ibks-bank/profile/cmd/swagger"
 	"github.com/ibks-bank/profile/config"
 	"github.com/ibks-bank/profile/internal/app/profile"
-	"github.com/ibks-bank/profile/internal/pkg/auth"
+	"github.com/ibks-bank/profile/internal/pb/bank_account"
 	"github.com/ibks-bank/profile/internal/pkg/email"
 	"github.com/ibks-bank/profile/internal/pkg/store"
 	gw "github.com/ibks-bank/profile/pkg/profile"
@@ -49,7 +50,6 @@ func main() {
 	auther := auth.NewAuthorizer(
 		conf.Auth.SigningKey,
 		time.Duration(conf.Auth.TokenTTL)*time.Second,
-		st,
 	)
 
 	emailer := email.NewSender(
@@ -59,15 +59,22 @@ func main() {
 		conf.Auth.SmtpPort,
 	)
 
+	bankAccountConn, err := grpc.Dial(conf.Server.BankAccountUrl, grpc.WithBlock(), grpc.WithInsecure())
+	if err != nil {
+		log.Fatalln("can't connect bank account: ", err)
+	}
+	defer bankAccountConn.Close()
+	bankAccountClient := bank_account.NewBankAccountClient(bankAccountConn)
+
 	lis, err := net.Listen("tcp", ":"+grpcPort)
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
 	}
 
-	s := grpc.NewServer(grpc.UnaryInterceptor(auth.Interceptor))
+	s := grpc.NewServer(grpc.UnaryInterceptor(auther.Interceptor))
 	gw.RegisterProfileServer(
 		s,
-		profile.NewServer(st, auther, emailer),
+		profile.NewServer(st, auther, emailer, bankAccountClient),
 	)
 	log.Println("Serving gRPC on 0.0.0.0:" + grpcPort)
 	go func() {
