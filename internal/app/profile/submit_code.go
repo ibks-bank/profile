@@ -26,7 +26,7 @@ func (srv *Server) SubmitCode(ctx context.Context, req *profile.SubmitCodeReques
 		return nil, cerr.Wrap(err, "can't expire code")
 	}
 
-	token, err := srv.auth.GetToken(req.GetEmail(), req.GetPassword(), user.HashSalt)
+	token, err := srv.auth.GetToken(req.GetEmail(), req.GetPassword(), user.HashSalt, user.ID)
 	if err != nil {
 		return nil, cerr.Wrap(err, "can't sign in")
 	}

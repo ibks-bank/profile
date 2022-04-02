@@ -220,8 +220,8 @@ github.com/hashicorp/serf v0.8.2/go.mod h1:6hOLApaqBFA1NXqRQAsxw9QxuDEvNxSQRwA/J
 github.com/hashicorp/serf v0.9.5/go.mod h1:UWDWwZeL5cuWDJdl0C6wrvrUwEqtQ4ZKBKKENpqIUyk=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
-github.com/ibks-bank/libs/auth v1.0.1 h1:7hIwjsn9Edy8ZQvoNe1ZtYgYeqn06vU8oM+sBl+A2vo=
-github.com/ibks-bank/libs/auth v1.0.1/go.mod h1:0jX1NdJoXTfSEd4Vi4PD5jZl3wx+4HWgKmHc8+OyQ9s=
+github.com/ibks-bank/libs/auth v1.0.2 h1:emMWCTerenn+rWzx8N1eY1Yk3vAQoY7WXFrWGn5OCIg=
+github.com/ibks-bank/libs/auth v1.0.2/go.mod h1:0jX1NdJoXTfSEd4Vi4PD5jZl3wx+4HWgKmHc8+OyQ9s=
 github.com/ibks-bank/libs/cerr v1.0.0 h1:N56oWnEkTELxq0Ru9tTOZAv5UTftIxpRSqpZKB3y4ss=
 github.com/ibks-bank/libs/cerr v1.0.0/go.mod h1:BMaoS7NtDzshhXVyDqLLJSqt9WCYDgOTN4Fn3OkjfaA=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=

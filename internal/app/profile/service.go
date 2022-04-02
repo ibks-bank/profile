@@ -29,7 +29,7 @@ type storeInterface interface {
 }
 
 type authInterface interface {
-	GetToken(login, password, salt string) (string, error)
+	GetToken(login, password, salt string, userID int64) (string, error)
 }
 
 type emailInterface interface {
