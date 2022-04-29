@@ -20,8 +20,8 @@ services:
       #AUTH
       - SIGNING_KEY=your_signing_key
       - TOKEN_TTL=86400
-      - EMAIL_2FA=your@email.com
-      - PASSWORD_2FA=your_password
+      - EMAIL_2FA=bipbank22@gmail.com
+      - PASSWORD_2FA=ibksizi!
       - SMTP_HOST=smtp.gmail.com
       - SMTP_PORT=587
 
@@ -31,6 +31,8 @@ services:
       - PG_DATABASE=profile
       - PG_USER=postgres
       - PG_PASSWORD=postgres
+
+      - CLIENTS_BANK_ACCOUNT_URL=
     ports:
       #TCP
       - '3011:3001'

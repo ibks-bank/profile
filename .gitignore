@@ -4,3 +4,4 @@
 /config/dev.env
 app
 Dockerfile
+/cmd/swagger

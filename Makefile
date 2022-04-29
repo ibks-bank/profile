@@ -12,7 +12,7 @@ generate:
 		--grpc-gateway_out=logtostderr=true:./internal/pb \
 		--go_out=plugins=grpc:./internal/pb ./vendor.protogen/bank_account/bank_account.proto
 
-	statik -src=./swagger -dest ./cmd -p swagger
+	statik -f -src=./swagger -dest ./cmd -p swagger
 
 .PHONY: migrate-up
 migrate-up:

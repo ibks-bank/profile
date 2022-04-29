@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/ibks-bank/libs/cerr"
 	"github.com/ibks-bank/profile/internal/pkg/store"
 	"github.com/ibks-bank/profile/pkg/profile"
@@ -11,6 +12,11 @@ import (
 )
 
 func (srv *Server) SubmitCode(ctx context.Context, req *profile.SubmitCodeRequest) (*profile.SubmitCodeResponse, error) {
+	err := validateSubmitCodeRequest(req)
+	if err != nil {
+		return nil, cerr.WrapMC(err, "validation error", codes.InvalidArgument)
+	}
+
 	user, err := srv.store.GetUser(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
 		if errors.Is(err, store.ErrNotFound) {
@@ -19,6 +25,15 @@ func (srv *Server) SubmitCode(ctx context.Context, req *profile.SubmitCodeReques
 
 		return nil, cerr.Wrap(err, "can't get user")
 
+	}
+
+	code, err := srv.store.GetCode(ctx, req.GetCode())
+	if err != nil && !errors.Is(err, store.ErrNotFound) {
+		return nil, cerr.Wrap(err, "can't get code")
+	}
+
+	if code.Expired {
+		return nil, cerr.NewC("code already used", codes.InvalidArgument)
 	}
 
 	err = srv.store.ExpireCode(ctx, req.GetCode(), user.ID)
@@ -32,4 +47,22 @@ func (srv *Server) SubmitCode(ctx context.Context, req *profile.SubmitCodeReques
 	}
 
 	return &profile.SubmitCodeResponse{Token: token}, nil
+}
+
+func validateSubmitCodeRequest(req *profile.SubmitCodeRequest) error {
+	err := validation.Validate(req, validation.NotNil)
+	if err != nil {
+		return err
+	}
+
+	err = validation.ValidateStruct(req,
+		validation.Field(&req.Email, validation.Required),
+		validation.Field(&req.Password, validation.Required),
+		validation.Field(&req.Code, validation.Required),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
