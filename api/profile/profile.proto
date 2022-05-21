@@ -67,6 +67,27 @@ service Profile {
       tags: "QA"
     };
   }
+
+  rpc SetTelegramUsername(SetTelegramUsernameRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/set-tg-username"
+      body: "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Связать профиль с телеграмм аккаунтом"
+      description: "Связывает профиль с телеграмм аккаунтом"
+    };
+  }
+
+  rpc GetTelegramUsername(google.protobuf.Empty) returns (GetTelegramUsernameResponse) {
+    option (google.api.http).get = "/v1/tg-username";
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Получить телеграмм имя"
+      description: "Получить телеграмм имя"
+    };
+  }
 }
 
 message SignInRequest {
@@ -110,4 +131,12 @@ message SubmitCodeResponse {
 message SetAuthenticationCodeRequest {
   string code = 1;
   int64 userID = 2;
+}
+
+message SetTelegramUsernameRequest {
+  string tgUsername = 1;
+}
+
+message GetTelegramUsernameResponse {
+  string tgUsername = 1;
 }

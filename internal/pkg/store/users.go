@@ -3,6 +3,8 @@ package store
 import (
 	"context"
 	"database/sql"
+	"github.com/ibks-bank/libs/cerr"
+	"github.com/volatiletech/null/v8"
 	"strings"
 
 	"github.com/ibks-bank/libs/auth"
@@ -55,4 +57,14 @@ func (st *store) CreateUser(ctx context.Context, user *models.User, passport *mo
 	}
 
 	return user.ID, nil
+}
+
+func (st *store) AddTelegramUsername(ctx context.Context, user *models.User, tgUsername string) error {
+	user.TGUsername = null.String{String: tgUsername, Valid: true}
+	_, err := user.Update(ctx, st.db, boil.Whitelist(models.UserColumns.TGUsername))
+	if err != nil {
+		return cerr.Wrap(err, "can't update user")
+	}
+
+	return nil
 }

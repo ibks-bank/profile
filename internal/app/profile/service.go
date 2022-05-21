@@ -22,6 +22,7 @@ type storeInterface interface {
 	CreateUser(ctx context.Context, user *models.User, passport *models.Passport) (int64, error)
 	GetUser(ctx context.Context, login, password string) (*models.User, error)
 	GetPassport(ctx context.Context, id int64) (*models.Passport, error)
+	AddTelegramUsername(ctx context.Context, user *models.User, tgUsername string) error
 
 	GetCode(ctx context.Context, code string) (*models.AuthenticationCode, error)
 	InsertCode(ctx context.Context, code *models.AuthenticationCode) error

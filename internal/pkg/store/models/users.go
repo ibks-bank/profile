@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/friendsofgo/errors"
+	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -23,12 +24,13 @@ import (
 
 // User is an object representing the database table.
 type User struct {
-	ID         int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
-	CreatedAt  time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	Email      string    `boil:"email" json:"email" toml:"email" yaml:"email"`
-	Password   string    `boil:"password" json:"password" toml:"password" yaml:"password"`
-	PassportID int64     `boil:"passport_id" json:"passport_id" toml:"passport_id" yaml:"passport_id"`
-	HashSalt   string    `boil:"hash_salt" json:"hash_salt" toml:"hash_salt" yaml:"hash_salt"`
+	ID         int64       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	CreatedAt  time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	Email      string      `boil:"email" json:"email" toml:"email" yaml:"email"`
+	Password   string      `boil:"password" json:"password" toml:"password" yaml:"password"`
+	PassportID int64       `boil:"passport_id" json:"passport_id" toml:"passport_id" yaml:"passport_id"`
+	HashSalt   string      `boil:"hash_salt" json:"hash_salt" toml:"hash_salt" yaml:"hash_salt"`
+	TGUsername null.String `boil:"tg_username" json:"tg_username,omitempty" toml:"tg_username" yaml:"tg_username,omitempty"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -41,6 +43,7 @@ var UserColumns = struct {
 	Password   string
 	PassportID string
 	HashSalt   string
+	TGUsername string
 }{
 	ID:         "id",
 	CreatedAt:  "created_at",
@@ -48,6 +51,7 @@ var UserColumns = struct {
 	Password:   "password",
 	PassportID: "passport_id",
 	HashSalt:   "hash_salt",
+	TGUsername: "tg_username",
 }
 
 var UserTableColumns = struct {
@@ -57,6 +61,7 @@ var UserTableColumns = struct {
 	Password   string
 	PassportID string
 	HashSalt   string
+	TGUsername string
 }{
 	ID:         "users.id",
 	CreatedAt:  "users.created_at",
@@ -64,9 +69,34 @@ var UserTableColumns = struct {
 	Password:   "users.password",
 	PassportID: "users.passport_id",
 	HashSalt:   "users.hash_salt",
+	TGUsername: "users.tg_username",
 }
 
 // Generated where
+
+type whereHelpernull_String struct{ field string }
+
+func (w whereHelpernull_String) EQ(x null.String) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_String) NEQ(x null.String) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_String) LT(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_String) LTE(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_String) GT(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_String) GTE(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
+func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var UserWhere = struct {
 	ID         whereHelperint64
@@ -75,6 +105,7 @@ var UserWhere = struct {
 	Password   whereHelperstring
 	PassportID whereHelperint64
 	HashSalt   whereHelperstring
+	TGUsername whereHelpernull_String
 }{
 	ID:         whereHelperint64{field: "\"users\".\"id\""},
 	CreatedAt:  whereHelpertime_Time{field: "\"users\".\"created_at\""},
@@ -82,6 +113,7 @@ var UserWhere = struct {
 	Password:   whereHelperstring{field: "\"users\".\"password\""},
 	PassportID: whereHelperint64{field: "\"users\".\"passport_id\""},
 	HashSalt:   whereHelperstring{field: "\"users\".\"hash_salt\""},
+	TGUsername: whereHelpernull_String{field: "\"users\".\"tg_username\""},
 }
 
 // UserRels is where relationship names are stored.
@@ -108,9 +140,9 @@ func (*userR) NewStruct() *userR {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "created_at", "email", "password", "passport_id", "hash_salt"}
+	userAllColumns            = []string{"id", "created_at", "email", "password", "passport_id", "hash_salt", "tg_username"}
 	userColumnsWithoutDefault = []string{"email", "password", "passport_id", "hash_salt"}
-	userColumnsWithDefault    = []string{"id", "created_at"}
+	userColumnsWithDefault    = []string{"id", "created_at", "tg_username"}
 	userPrimaryKeyColumns     = []string{"id"}
 	userGeneratedColumns      = []string{}
 )

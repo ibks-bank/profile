@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/friendsofgo/errors v0.9.2
+	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/golang/glog v1.0.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
@@ -14,6 +15,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.4
 	github.com/rakyll/statik v0.1.7
+	github.com/volatiletech/null/v8 v8.1.2
 	github.com/volatiletech/sqlboiler/v4 v4.8.6
 	github.com/volatiletech/strmangle v0.0.2
 	google.golang.org/genproto v0.0.0-20220317150908-0efb43f6373e
@@ -23,13 +25,15 @@ require (
 )
 
 require (
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
-	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible // indirect
+	github.com/gofrs/uuid v3.2.0+incompatible // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/volatiletech/inflect v0.0.1 // indirect
+	github.com/volatiletech/randomize v0.0.1 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
